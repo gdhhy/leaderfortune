@@ -10,11 +10,13 @@ public class Member implements Serializable {
     private String idCard;
     private String phone;
     private String memberInfo;
-    private String parentNo;
-    private Integer curLevel;
-    private Integer childTotal;
-    private Integer childDepth;
-    private Integer directCount;
+    private Integer targetCount;
+    private Integer depositCount;
+    private Integer repaymentCount;
+    private Integer returnCount;
+    private Integer withdrawCount;
+    private Integer investmentCount;
+    private Integer fundsCount;
 
     public Integer getMemberId() {
         return memberId;
@@ -64,46 +66,6 @@ public class Member implements Serializable {
         this.memberInfo = memberInfo;
     }
 
-    public String getParentNo() {
-        return parentNo;
-    }
-
-    public void setParentNo(String parentNo) {
-        this.parentNo = parentNo;
-    }
-
-    public Integer getCurLevel() {
-        return curLevel;
-    }
-
-    public void setCurLevel(Integer curLevel) {
-        this.curLevel = curLevel;
-    }
-
-    public Integer getChildTotal() {
-        return childTotal;
-    }
-
-    public void setChildTotal(Integer childTotal) {
-        this.childTotal = childTotal;
-    }
-
-    public Integer getChildDepth() {
-        return childDepth;
-    }
-
-    public void setChildDepth(Integer childDepth) {
-        this.childDepth = childDepth;
-    }
-
-    public Integer getDirectCount() {
-        return directCount;
-    }
-
-    public void setDirectCount(Integer directCount) {
-        this.directCount = directCount;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -112,4 +74,59 @@ public class Member implements Serializable {
         this.userName = userName;
     }
 
+    public Integer getTargetCount() {
+        return targetCount;
+    }
+
+    public void setTargetCount(Integer targetCount) {
+        this.targetCount = targetCount;
+    }
+
+    public Integer getDepositCount() {
+        return depositCount;
+    }
+
+    public void setDepositCount(Integer depositCount) {
+        this.depositCount = depositCount;
+    }
+
+    public Integer getRepaymentCount() {
+        return repaymentCount;
+    }
+
+    public void setRepaymentCount(Integer repaymentCount) {
+        this.repaymentCount = repaymentCount;
+    }
+
+    public Integer getReturnCount() {
+        return returnCount;
+    }
+
+    public void setReturnCount(Integer returnCount) {
+        this.returnCount = returnCount;
+    }
+
+    public Integer getWithdrawCount() {
+        return withdrawCount;
+    }
+
+    public void setWithdrawCount(Integer withdrawCount) {
+        this.withdrawCount = withdrawCount;
+    }
+
+    public Integer getInvestmentCount() {
+        return investmentCount;
+    }
+
+    public void setInvestmentCount(Integer investmentCount) {
+        this.investmentCount = investmentCount;
+    }
+
+    public Integer getFundsCount() {
+        return fundsCount;
+    }
+
+    public void setFundsCount(Integer fundsCount) {
+        this.fundsCount = fundsCount;
+    }
 }

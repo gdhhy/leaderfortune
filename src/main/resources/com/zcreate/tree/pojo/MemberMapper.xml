@@ -3,39 +3,121 @@
 
 <mapper namespace="com.zcreate.tree.dao.MemberMapper">
     <cache eviction="LRU" readOnly="true" flushInterval="86400000" size="10000"/>
-    <resultMap id="UserResult" type="com.zcreate.tree.pojo.Member">
+    <!--
+        biaodi	标的信息 target
+        chongzhi	充值记录 deposit
+        huankuan	还款记录 repayment
+        huikuan	回款记录 return
+        tixian	提现记录 withdraw
+        touzi	投资记录 investment
+        user	用户信息
+        useraccount	资金流水 funds
+    -->
+    <resultMap id="MemberResult" type="com.zcreate.tree.pojo.Member">
         <result column="member_id" jdbcType="INTEGER" property="memberId"/>
         <result column="member_no" jdbcType="VARCHAR" property="memberNo"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="real_name" jdbcType="VARCHAR" property="realName"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="id_card" jdbcType="VARCHAR" property="idCard"/>
         <result column="member_info" jdbcType="VARCHAR" property="memberInfo"/>
-        <result column="parent_no" jdbcType="VARCHAR" property="parentNo"/>
-        <result column="cur_level" jdbcType="INTEGER" property="curLevel"/>
-        <result column="child_total" jdbcType="INTEGER" property="childTotal"/>
-        <result column="child_depth" jdbcType="INTEGER" property="childDepth"/>
-        <result column="direct_count" jdbcType="INTEGER" property="directCount"/> 
+        <result column="target_count" jdbcType="INTEGER" property="targetCount"/>
+        <result column="deposit_count" jdbcType="INTEGER" property="depositCount"/>
+        <result column="repayment_count" jdbcType="INTEGER" property="repaymentCount"/>
+        <result column="return_count" jdbcType="INTEGER" property="returnCount"/>
+        <result column="withdraw_count" jdbcType="INTEGER" property="withdrawCount"/>
+        <result column="investment_count" jdbcType="INTEGER" property="investmentCount"/>
+        <result column="funds_count" jdbcType="INTEGER" property="fundsCount"/>
     </resultMap>
-    <sql id="queryWhere">
+
+    <sql id="queryUserWhere">
         <where>
             <if test="param.memberNo!=null">AND member_no = #{param.memberNo:INTEGER}</if>
+            <if test="param.userName!=null">AND user_name = #{param.userName:INTEGER}</if>
             <if test="param.realName!=null">AND real_name = #{param.realName:VARCHAR}</if>
             <if test="param.phone!=null">AND phone = #{param.phone:VARCHAR}</if>
             <if test="param.idCard!=null">AND id_card = #{param.idCard:VARCHAR}</if>
-            <if test="param.parentNo!=null">AND parent_no = #{param.parentNo:INTEGER}</if>
-            <if test="param.threeThirty==true">AND child_depth>=2 and direct_count>=30</if>
         </where>
     </sql>
     <select id="getMemberCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*) FROM member
-        <include refid="queryWhere"/>
+        <include refid="queryUserWhere"/>
     </select>
-    <select id="selectMember" resultMap="UserResult" parameterType="java.util.Map" useCache="true">
-        SELECT
-        member_id, member_no, real_name, id_card, phone, member_info, parent_no, cur_level, child_total, child_depth,
-        direct_count
-        FROM member
-        <include refid="queryWhere"/>
+    <select id="selectMember" resultMap="MemberResult" parameterType="java.util.Map" useCache="true">
+        SELECT member_id,member_no,user_name,real_name,id_card,phone,email,member_info,target_count,deposit_count,repayment_count,
+        return_count,withdraw_count,investment_count,funds_count FROM member
+        <include refid="queryUserWhere"/>
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
+    </select><!-- <sql id="queryUserWhere">
+        <where>
+            <if test="param.memberNo!=null">AND 用户名 = #{param.memberNo:INTEGER}</if>
+            <if test="param.realName!=null">AND 真实姓名 = #{param.realName:VARCHAR}</if>
+            <if test="param.phone!=null">AND 电话号码 = #{param.phone:VARCHAR}</if>
+            <if test="param.idCard!=null">AND 身份证号码 = #{param.idCard:VARCHAR}</if>
+        </where>
+    </sql>
+    <select id="getMemberCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*) FROM user
+        <include refid="queryUserWhere"/>
+    </select>
+    <select id="selectMember" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT id,用户名,真实姓名,电话号码,身份证号码,邮箱账号,绑定的银行卡号,支行名称,开户行地址,银行名称,第三方账号,借款总金额,借款次数,应还本息,已还利息,总投资金额,已收本金,已收利息,合作机构,用户类型,
+        注册时间,地址,旧uid,"(旧)汇付天下账户","(旧)汇付天下id","(旧)银行","(旧)银行卡号","(旧)支行","(旧)借款总金额","(旧)借款次数","(旧)担保公司","(旧)已还总利息","(旧)已还总本金","(旧)已收总利息",
+        "(旧)已收总本金","(旧)注册时间",类型,总充值,总提现 FROM user
+        <include refid="queryUserWhere"/>
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
+    </select>-->
+    <!-- 标的信息 -->
+    <select id="getTargetCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*)
+        FROM biaodi
+        where user_id = #{param.user_id:INTEGER}
+    </select>
+    <select id="selectTarget" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT 订单号,user_id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,微商银行账号,绑定的银行卡号,银行名称,支行名称,"(旧)银行卡号",归属银行,开户支行,"(旧)汇付天下用户",
+        "(旧)汇付天下账号",项目名称,借款金额,借款利息,借款期数,总成本,委托人姓名,还款方式,借款用途,合作机构,投资人,签单号,上线时间,签单时间,满标时间,放款时间,到期时间,借款类型,
+        债权人,状态 FROM biaodi where user_id = #{param.user_id:INTEGER}
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
+    </select>
+    <!--充值记录-->
+    <select id="getDepositCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*)
+        FROM chongzhi
+        where user_id = #{param.user_id:INTEGER}
+    </select>
+    <select id="selectDeposit" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,充值金额,充值手续费,充值类型,ifnull(充值银行卡号,'')充值银行卡号,订单号,状态,时间 FROM chongzhi
+        where user_id = #{param.user_id:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}
@@ -49,20 +131,114 @@
         </choose>
     </select>
 
-
-    <sql id="queryWhere2">
-        <where>
-            <if test="param.memberNo!=null">AND intouserid = #{param.memberNo:INTEGER}</if>
-            <choose>
-                <when test="param.purseType>0">AND intopursetypeid = #{param.purseType:INTEGER}</when>
-                <when test="@com.zcreate.Ognl@isNotEmpty(param.purseName)">AND intopursetypeid in
-                    (select id from fund_purse_type where name=#{param.purseName:VARCHAR})
-                </when>
-            </choose>
-            <if test="param.reasonCode!=null">AND reasoncode = #{param.reasonCode:INTEGER}</if>
-        </where>
-    </sql> 
-    <select id="selectParent" resultType="java.util.Map" parameterType="java.util.Map" statementType="CALLABLE">
-        call findParent(#{param.memberNo,jdbcType=VARCHAR,mode=IN}, #{param.maxlevel,jdbcType=INTEGER,mode=IN})
+    <!--提现记录-->
+    <select id="getWithdrawCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*)
+        FROM tixian
+        where user_id = #{param.user_id:INTEGER}
+    </select>
+    <select id="selectWithdraw" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,绑定的银行卡号,微商银行账号,充值金额,充值手续费,取现类型,取现银行卡号,订单号,状态,时间 FROM tixian
+        where user_id = #{param.user_id:INTEGER}
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
+    </select>
+    <!--还款记录-->
+    <select id="getRepaymentCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*)
+        FROM huankuan
+        where 用户id = #{param.user_id:INTEGER}
+    </select>
+    <select id="selectRepayment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT 用户id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,绑定的银行卡号,微商银行账号,资金总额,应还本金,应还利息,剩余还款金额,"收款期数/总期数",
+        要求还款时间,借款人实际还款时,交易状况,状态 FROM huankuan
+        where 用户id = #{param.user_id:INTEGER}
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
+    </select>
+    <!--回款记录-->
+    <select id="getReturnCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*)
+        FROM huikuan
+        where user_id = #{param.user_id:INTEGER}
+    </select>
+    <select id="selectReturn" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT user_id,真实姓名,电话号码,邮箱账号,身份证号码,绑定的银行卡号,微商银行账号,借款项目名称,借款订单号,资金总额,应还本金,应还利息,"收款期数/总期数",
+        要求还款时间,借款用户还款时间,提前还款时间,交易状况,类型,还款状态 FROM huikuan
+        where user_id = #{param.user_id:INTEGER}
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
+    </select>
+    <!--投资记录-->
+    <select id="getInvestmentCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*)
+        FROM touzi
+        where user_id = #{param.user_id:INTEGER}
+    </select>
+    <select id="selectInvestment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
+        放款状态,投资状态,交易号,时间 FROM touzi
+        where user_id = #{param.user_id:INTEGER}
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
+    </select>
+    <!--资金流水-->
+    <select id="getFundsCount" resultType="int" parameterType="java.util.Map" useCache="true">
+        SELECT count(*)
+        FROM useraccount
+        where 用户id = #{param.user_id:INTEGER}
+    </select>
+    <select id="selectFunds" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        SELECT 用户id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'') 绑定的银行卡号,微商银行账号,资金变动金额,资金总额,
+        不可提现金额,现金,冻结,资金变动说明,ifnull(借款项目名称,'') 借款项目名称,
+       ifnull( 借款订单号,'') 借款订单号,时间,ifnull(资金变动类型,'') 资金变动类型,变动类型 FROM useraccount
+        where 用户id = #{param.user_id:INTEGER}
+        <choose>
+            <when test="param.start>0 and param.length >0">
+                limit #{param.start:INTEGER},#{param.length:INTEGER}
+            </when>
+            <when test="param.length >0">
+                limit #{param.length:INTEGER}
+            </when>
+            <otherwise>
+                limit 1000
+            </otherwise>
+        </choose>
     </select>
 </mapper>
