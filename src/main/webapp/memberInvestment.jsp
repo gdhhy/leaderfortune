@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富查询系统 - 投资记录</title>
+    <title>礼德财富 投资记录</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -51,6 +51,8 @@
                     if (result.data.length > 0) {
                         $('#realName').text(result.data[0].realName);
                         $('#idCard').text(result.data[0].idCard);
+                        var memberInfo = JSON.parse(result.data[0].memberInfo);
+                        $('#bankCardNo').text(memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号);
                     }
                 });
             }
@@ -63,10 +65,8 @@
                 .DataTable({
                     bAutoWidth: false,
                     "columns": [
-
+                        {"data": "user_id", "sClass": "center"},
                         {"data": "时间", "sClass": "center", width: "160px"},
-                        {"data": "绑定的银行卡号", "sClass": "center"},
-                        {"data": "微商银行账号", "sClass": "center"},
                         {"data": "投资金额", "sClass": "center"},
                         {"data": "总加息利率", "sClass": "center"},
                         {"data": "借款项目名称", "sClass": "center"},
@@ -80,20 +80,18 @@
                     ],
 
                     'columnDefs': [
-
-                        {"orderable": false, className: 'text-center', 'targets': 0, title: '时间'},
-                        {"orderable": false, className: 'text-center', "targets": 1, title: '绑定的银行卡号'},
-                        {"orderable": false, className: 'text-center', "targets": 2, title: '微商银行账号'},
-                        {"orderable": false, className: 'text-center', "targets": 3, title: '投资金额'},
-                        {"orderable": false, className: 'text-center', "targets": 4, title: '总加息利率'},
-                        {"orderable": false, className: 'text-center', "targets": 5, title: '借款项目名称'},
-                        {"orderable": false, className: 'text-center', "targets": 6, title: '借款订单号'},
-                        {"orderable": false, className: 'text-center', "targets": 7, title: '借款用户'},
-                        {"orderable": false, className: 'text-center', "targets": 8, title: '是否自动投标'},
-                        {"orderable": false, className: 'text-center', "targets": 9, title: '债权申请转让'},
-                        {"orderable": false, className: 'text-center', "targets": 10, title: '放款状态'},
-                        {"orderable": false, className: 'text-center', "targets": 11, title: '投资状态'},
-                        {"orderable": false, className: 'text-center', "targets": 12, title: '交易号'}
+                        {"orderable": false, 'targets': 0, width: 20},
+                        {"orderable": false, 'targets': 1, title: '时间', width: 140},
+                        {"orderable": false, "targets": 2, title: '投资金额'},
+                        {"orderable": false, "targets": 3, title: '总加息利率'},
+                        {"orderable": false, "targets": 4, title: '借款项目名称'},
+                        {"orderable": false, "targets": 5, title: '借款订单号'},
+                        {"orderable": false, "targets": 6, title: '借款用户'},
+                        {"orderable": false, "targets": 7, title: '是否自动投标'},
+                        {"orderable": false, "targets": 8, title: '债权申请转让'},
+                        {"orderable": false, "targets": 9, title: '放款状态'},
+                        {"orderable": false, "targets": 10, title: '投资状态'},
+                        {"orderable": false, "targets": 11, title: '交易号'}
 
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
@@ -111,15 +109,22 @@
                                 total += value["投资金额"];
                         });
 
-                        $('#succeedSum').text('，本页投资成功合计： ' + accounting.formatMoney(total, '￥'));
+                        // $('#succeedSum').text('，本页投资成功合计： ' + accounting.formatMoney(total, '￥'));
+                        // Update footer
+                        $(tfoot).find('th').eq(0).html('投资成功金额合计： ' + accounting.formatMoney(total, '￥'));
                     },
                     select: {style: 'single'}
                 });
-            /* myTable.on('order.dt search.dt', function () {
-                 myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                     cell.innerHTML = i + 1;
-                 });
-             });*/
+
+            myTable.on('order.dt search.dt', function () {
+                myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            });
+            myTable.on('xhr', function (e, settings, json, xhr) {
+                if (json.recordsTotal > 0)
+                    $('#wechatCard').text(json.data[0].微商银行账号);
+            });
 
             //$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
             new $.fn.dataTable.Buttons(myTable, {
@@ -176,7 +181,9 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span> ，投资记录<span id="succeedSum"></span>
+                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span>，
+                                    绑定的银行卡号：<span id="bankCardNo"></span>，微商银行账号 <span id="wechatCard"></span>
+                                    ，投资记录
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->
@@ -184,6 +191,13 @@
                                 <!-- div.dataTables_borderWrap -->
                                 <div>
                                     <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="12" style="text-align:right">
+                                                <div id="footTotal">&nbsp;</div>
+                                            </th>
+                                        </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>

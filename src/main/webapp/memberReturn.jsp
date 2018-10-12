@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富查询系统 - 回款记录</title>
+    <title>礼德财富 回款记录</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -51,6 +51,8 @@
                     if (result.data.length > 0) {
                         $('#realName').text(result.data[0].realName);
                         $('#idCard').text(result.data[0].idCard);
+                        var memberInfo = JSON.parse(result.data[0].memberInfo);
+                        $('#bankCardNo').text(memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号);
                     }
                 });
             }
@@ -63,16 +65,15 @@
                 .DataTable({
                     bAutoWidth: false,
                     "columns": [
+                        {"data": "user_id", "sClass": "center"},
+                        {"data": "借款用户还款时间", "sClass": "center"},
                         {"data": "借款订单号", "sClass": "center"},
-                        {"data": "绑定的银行卡号", "sClass": "center"},
-                        {"data": "微商银行账号", "sClass": "center"},
                         {"data": "借款项目名称", "sClass": "center"},
                         {"data": "资金总额", "sClass": "center"},
                         {"data": "应还本金", "sClass": "center"},
                         {"data": "应还利息", "sClass": "center"},
                         {"data": "收款期数/总期数", "sClass": "center"},
                         {"data": "要求还款时间", "sClass": "center"},
-                        {"data": "借款用户还款时间", "sClass": "center"},
                         {"data": "提前还款时间", "sClass": "center"},
                         {"data": "交易状况", "sClass": "center"},
                         {"data": "类型", "sClass": "center"},
@@ -80,20 +81,19 @@
                     ],
 
                     'columnDefs': [
-                        {"orderable": false, className: 'text-center', "targets": 0, title: '借款订单号'},
-                        {"orderable": false, className: 'text-center', "targets": 1, title: '绑定的银行卡号'},
-                        {"orderable": false, className: 'text-center', "targets": 2, title: '微商银行账号'},
-                        {"orderable": false, className: 'text-center', "targets": 3, title: '借款项目名称'},
-                        {"orderable": false, className: 'text-center', "targets": 4, title: '资金总额'},
-                        {"orderable": false, className: 'text-center', "targets": 5, title: '应还本金'},
-                        {"orderable": false, className: 'text-center', "targets": 6, title: '应还利息'},
-                        {"orderable": false, className: 'text-center', "targets": 7, title: '收款期数/总期数'},
-                        {"orderable": false, className: 'text-center', "targets": 8, title: '要求还款时间'},
-                        {"orderable": false, className: 'text-center', "targets": 9, title: '借款用户还款时间'},
-                        {"orderable": false, className: 'text-center', "targets": 10, title: '提前还款时间'},
-                        {"orderable": false, className: 'text-center', "targets": 11, title: '交易状况'},
-                        {"orderable": false, className: 'text-center', "targets": 12, title: '类型'},
-                        {"orderable": false, className: 'text-center', "targets": 13, title: '还款状态'}
+                        {"orderable": false, 'targets': 0, width: 20},
+                        {"orderable": false, "targets": 1, title: '要求还款时间', width: 140},
+                        {"orderable": false, "targets": 2, title: '借款订单号'},
+                        {"orderable": false, "targets": 3, title: '借款项目名称'},
+                        {"orderable": false, "targets": 4, title: '资金总额'},
+                        {"orderable": false, "targets": 5, title: '应还本金'},
+                        {"orderable": false, "targets": 6, title: '应还利息'},
+                        {"orderable": false, "targets": 7, title: '收款期数/总期数'},
+                        {"orderable": false, "targets": 8, title: '借款用户还款时间', width: 140},
+                        {"orderable": false, "targets": 9, title: '提前还款时间'},
+                        {"orderable": false, "targets": 10, title: '交易状况'},
+                        {"orderable": false, "targets": 11, title: '类型'},
+                        {"orderable": false, "targets": 12, title: '还款状态'}
 
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
@@ -104,23 +104,29 @@
                     searching: false,
                     "ajax": url,
                     "processing": true,
-                   /* "footerCallback": function (tfoot, data, start, end, display) {
+                    "footerCallback": function (tfoot, data, start, end, display) {
                         var total = 0.0;
                         $.each(data, function (index, value) {
-                            if (value["投资状态"] === '投资成功')
-                                total += value["投资金额"];
+                            if (value["还款状态"].indexOf('已还') > 0)
+
+                                total += value["资金总额"];
                         });
 
-                        $('#succeedSum').text('，本页投资成功合计： ' + accounting.formatMoney(total, '￥'));
-                    },*/
+                        // Update footer
+                        $(tfoot).find('th').eq(0).html('已还资金总额合计： ' + accounting.formatMoney(total, '￥'));
+                    },
                     select: {style: 'single'}
                 });
-            /* myTable.on('order.dt search.dt', function () {
-                 myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                     cell.innerHTML = i + 1;
-                 });
-             });*/
+            myTable.on('order.dt search.dt', function () {
+                myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            });
 
+            myTable.on('xhr', function (e, settings, json, xhr) {
+                if (json.recordsTotal > 0)
+                    $('#wechatCard').text(json.data[0].微商银行账号);
+            });
             //$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
             new $.fn.dataTable.Buttons(myTable, {
                 buttons: [
@@ -176,7 +182,8 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span> ，回款记录<span id="succeedSum"></span>
+                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span>，
+                                    绑定的银行卡号：<span id="bankCardNo"></span>，微商银行账号 <span id="wechatCard"></span> ，回款记录
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->
@@ -184,6 +191,13 @@
                                 <!-- div.dataTables_borderWrap -->
                                 <div>
                                     <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="13" style="text-align:right">
+                                                <div id="footTotal">&nbsp;</div>
+                                            </th>
+                                        </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>

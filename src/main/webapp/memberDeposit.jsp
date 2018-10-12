@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富查询系统 - 充值记录</title>
+    <title>礼德财富 充值记录</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -51,6 +51,8 @@
                     if (result.data.length > 0) {
                         $('#realName').text(result.data[0].realName);
                         $('#idCard').text(result.data[0].idCard);
+                        var memberInfo = JSON.parse(result.data[0].memberInfo);
+                        $('#bankCardNo').text(memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号);
                     }
                 });
             }
@@ -62,30 +64,28 @@
                 .DataTable({
                     bAutoWidth: false,
                     "columns": [
+                        {"data": "user_id", "sClass": "center"},
+                        {"data": "时间", "sClass": "center"},
                         {"data": "订单号", "sClass": "center"},
-                        {"data": "绑定的银行卡号", "sClass": "center"},
-                        {"data": "微商银行账号", "sClass": "center"},
                         {"data": "充值银行卡号", "sClass": "center"},
                         {"data": "充值金额", "sClass": "center"},
                         {"data": "充值手续费", "sClass": "center"},
                         {"data": "充值类型", "sClass": "center"},
-                        {"data": "状态", "sClass": "center"},
-                        {"data": "时间", "sClass": "center"}
+                        {"data": "状态", "sClass": "center"}
                     ],
 
                     'columnDefs': [
-                        {"orderable": true, className: 'text-center', "targets": 0, title: '订单号'},
-                        {"orderable": true, className: 'text-center', "targets": 1, title: '绑定的银行卡号'},
-                        {"orderable": true, className: 'text-center', "targets": 2, title: '微商银行账号'},
-                        {"orderable": true, className: 'text-center', "targets": 3, title: '充值银行卡号'},
-                        {"orderable": false, className: 'text-center', "targets": 4, title: '充值金额'},
-                        {"orderable": true, className: 'text-center', "targets": 5, title: '充值手续费'},
-                        {"orderable": true, className: 'text-center', "targets": 6, title: '充值类型'},
-                        {"orderable": true, className: 'text-center', 'targets': 7, title: '状态'},
-                        {"orderable": true, className: 'text-center', 'targets': 8, title: '时间'}
+                        {"orderable": false, 'targets': 0, width: 20},
+                        {"orderable": false, 'targets': 1, title: '时间', width: 140},
+                        {"orderable": false, "targets": 2, title: '订单号'},
+                        {"orderable": false, "targets": 3, title: '充值银行卡号'},
+                        {"orderable": false, "targets": 4, title: '充值金额'},
+                        {"orderable": false, "targets": 5, title: '充值手续费'},
+                        {"orderable": false, "targets": 6, title: '充值类型'},
+                        {"orderable": false, 'targets': 7, title: '状态'}
 
                     ],
-                    "aLengthMenu": [[20, 100, 1000,-1], ["20", "100","1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
+                    "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
                     "aaSorting": [],//"aaSorting": [[ 4, "desc" ]],//设置第5个元素为默认排序
                     language: {
                         url: '/js/datatables/datatables.chinese.json'
@@ -104,11 +104,15 @@
                     },
                     select: {style: 'single'}
                 });
-           /* myTable.on('order.dt search.dt', function () {
+            myTable.on('order.dt search.dt', function () {
                 myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
                     cell.innerHTML = i + 1;
                 });
-            });*/
+            });
+            myTable.on('xhr', function (e, settings, json, xhr) {
+                if (json.recordsTotal > 0)
+                    $('#wechatCard').text(json.data[0].微商银行账号);
+            });
 
             //$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
             new $.fn.dataTable.Buttons(myTable, {
@@ -168,7 +172,9 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span> ，充值记录
+                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span>，
+                                    绑定的银行卡号：<span id="bankCardNo"></span>，微商银行账号 <span id="wechatCard"></span>
+                                    ，充值记录
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->
@@ -178,7 +184,7 @@
                                     <table id="dynamic-table" class="table table-striped table-bordered table-hover">
                                         <tfoot>
                                         <tr>
-                                            <th colspan="7" style="text-align:right">
+                                            <th colspan="8" style="text-align:right">
                                                 <div id="footTotal">&nbsp;</div>
                                             </th>
                                         </tr>

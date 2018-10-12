@@ -54,13 +54,15 @@
                     bAutoWidth: false,
                     "columns": [
                         {"data": "memberNo", "sClass": "center"},
+                        {"data": "memberNo", "sClass": "center"},
                         {"data": "userName", "sClass": "center", "defaultContent": ""},
                         {"data": "realName", "sClass": "center", "defaultContent": ""},
                         {"data": "idCard", "sClass": "center"},
                         {"data": "phone", "sClass": "center"},
+                        {"data": "usertype", "sClass": "center"},
+                        {"data": "deposit", "sClass": "center"},
+                        {"data": "withdraw", "sClass": "center"},
 
-                        {"data": "depositCount", "sClass": "center"},
-                        {"data": "withdrawCount", "sClass": "center"},
                         {"data": "repaymentCount", "sClass": "center"},
                         {"data": "returnCount", "sClass": "center", "defaultContent": ""},
                         {"data": "investmentCount", "sClass": "center", "defaultContent": ""},
@@ -69,54 +71,56 @@
                     ],
 
                     'columnDefs': [
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 0, title: 'id', "visible": false},
+                        {"orderable": false, 'targets': 0, width: 20},
+                        {"orderable": false, "targets": 1, title: 'id', "visible": false},
                         {
-                            "orderable": false, "searchable": false, className: 'text-center', "targets": 1, title: '用户名',
+                            "orderable": false, "targets": 2, title: '用户名',
                             render: function (data, type, row, meta) {
                                 return '<a href="#"  data-memberNo="{0}">{1}</a>'.format(row["memberNo"], data);
                             }
                         },
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 2, title: '真实姓名'},
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 3, title: '身份证号码'},
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 4, title: '电话号码'},
+                        {"orderable": false, "targets": 3, title: '真实姓名'},
+                        {"orderable": false, "targets": 4, title: '身份证号码'},
+                        {"orderable": false, "targets": 5, title: '电话号码'},
+                        {"orderable": false, "targets": 6, title: '用户类型'},
                         {
-                            "orderable": false, "searchable": false, className: 'text-center', "targets": 5, title: '充值记录',
+                            "orderable": false, "targets": 7, title: '总充值',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="hasDetail"  data-Url="/memberDeposit.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                                return data > 0 ? '<a href="#" class="hasDetail"  data-Url="/memberDeposit.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "searchable": false, className: 'text-center', "targets": 6, title: '提现记录',
+                            "orderable": false, "targets": 8, title: '总提现',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="hasDetail" data-Url="/memberWithdraw.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberWithdraw.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "searchable": false, className: 'text-center', "targets": 7, title: '还款记录',
+                            "orderable": false, "targets": 9, title: '还款记录',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="hasDetail" data-Url="/memberRepayment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberRepayment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "searchable": false, className: 'text-center', "targets": 8, title: '回款记录',
+                            "orderable": false, "targets": 10, title: '回款记录',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="hasDetail" data-Url="/memberReturn.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberReturn.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "searchable": false, className: 'text-center', "targets": 9, title: '投资记录',
+                            "orderable": false, "targets": 11, title: '投资记录',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="hasDetail" data-Url="/memberInvestment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberInvestment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
 
                         {
-                            "orderable": false, "searchable": false, className: 'text-center', "targets": 10, title: '资金流水',
+                            "orderable": false, "targets": 12, title: '资金流水',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="hasDetail" data-Url="/memberFunds.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberFunds.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 11, title: '标的信息'}
+                        {"orderable": false, "targets": 13, title: '标的信息'}
                     ],
                     "aLengthMenu": [[20, 100, 1000], ["20", "100", "1000"]],//二组数组，第一组数量，第二组说明文字;
                     "aaSorting": [],//"aaSorting": [[ 4, "desc" ]],//设置第5个元素为默认排序
@@ -125,7 +129,6 @@
                     },
                     searching: false,
                     scrollY: '60vh',
-                    //"ajax": "/listMember.jspx",
                     "ajax": {
                         url: "/listMember.jspx",
                         "data": function (d) {//删除多余请求参数
@@ -136,12 +139,33 @@
                     },
                     "processing": true,
                     "serverSide": true,
+                    /*"fnDrawCallback": function(){
+                        var api = this.api();
+                        //var startIndex= api.context[0]._iDisplayStart;//获取到本页开始的条数
+                        api.column(0).nodes().each(function(cell, i) {
+
+                            //此处 startIndex + i + 1;会出现翻页序号不连续，主要是因为startIndex 的原因,去掉即可。
+                            //cell.innerHTML = startIndex + i + 1;
+
+                            cell.innerHTML =  i + 1;
+
+                        });
+                    },*/
                     select: {style: 'single'}
                 });
-            myTable.on('order.dt search.dt', function () {
+            /*myTable.on('order.dt search.dt', function () {
                 myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
                     cell.innerHTML = i + 1;
                 });
+            });*/
+            myTable.on('xhr', function (e, settings, json, xhr) {
+                if (json.data.length > 0)
+                    for (var i = 0; i < json.data.length; i++) {
+                        var memberInfo = JSON.parse(json.data[i].memberInfo);
+                        json.data[i].usertype = memberInfo['基本信息']['用户类型'];
+                        json.data[i].deposit = memberInfo['资金汇总']['总充值'];
+                        json.data[i].withdraw = memberInfo['资金汇总']['总提现'];
+                    }
             });
             myTable.on('draw', function () {
                 var url;
