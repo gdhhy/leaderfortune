@@ -54,9 +54,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select><!-- <sql id="queryUserWhere">
         <where>
@@ -82,9 +79,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select>-->
     <!-- 标的信息 -->
@@ -104,9 +98,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select>
     <!--充值记录-->
@@ -125,9 +116,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select>
 
@@ -147,9 +135,7 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
+
         </choose>
     </select>
     <!--还款记录-->
@@ -159,7 +145,7 @@
         where 用户id = #{param.user_id:INTEGER}
     </select>
     <select id="selectRepayment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT 用户id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,绑定的银行卡号,微商银行账号,资金总额,应还本金,应还利息,剩余还款金额,"收款期数/总期数",
+        SELECT 用户id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,资金总额,应还本金,应还利息,剩余还款金额,`收款期数/总期数`,
         要求还款时间,借款人实际还款时,交易状况,状态 FROM huankuan
         where 用户id = #{param.user_id:INTEGER}
         <choose>
@@ -169,9 +155,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select>
     <!--回款记录-->
@@ -181,8 +164,8 @@
         where user_id = #{param.user_id:INTEGER}
     </select>
     <select id="selectReturn" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,真实姓名,电话号码,邮箱账号,身份证号码,绑定的银行卡号,微商银行账号,借款项目名称,借款订单号,资金总额,应还本金,应还利息,"收款期数/总期数",
-        要求还款时间,借款用户还款时间,提前还款时间,交易状况,类型,还款状态 FROM huikuan
+        SELECT user_id,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,借款项目名称,借款订单号,资金总额,应还本金,应还利息,`收款期数/总期数`,
+        要求还款时间,借款用户还款时间,ifnull(提前还款时间,'')提前还款时间,交易状况,类型,还款状态 FROM huikuan
         where user_id = #{param.user_id:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
@@ -191,9 +174,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select>
     <!--投资记录-->
@@ -203,8 +183,8 @@
         where user_id = #{param.user_id:INTEGER}
     </select>
     <select id="selectInvestment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
-        放款状态,投资状态,交易号,时间 FROM touzi
+        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
+        ifnull(放款状态,'')放款状态,投资状态,ifnull(交易号,'')交易号,时间 FROM touzi
         where user_id = #{param.user_id:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
@@ -213,9 +193,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select>
     <!--资金流水-->
@@ -227,7 +204,7 @@
     <select id="selectFunds" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
         SELECT 用户id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'') 绑定的银行卡号,微商银行账号,资金变动金额,资金总额,
         不可提现金额,现金,冻结,资金变动说明,ifnull(借款项目名称,'') 借款项目名称,
-       ifnull( 借款订单号,'') 借款订单号,时间,ifnull(资金变动类型,'') 资金变动类型,变动类型 FROM useraccount
+        ifnull( 借款订单号,'') 借款订单号,时间,ifnull(资金变动类型,'') 资金变动类型,变动类型 FROM useraccount
         where 用户id = #{param.user_id:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
@@ -236,9 +213,6 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-            <otherwise>
-                limit 1000
-            </otherwise>
         </choose>
     </select>
 </mapper>

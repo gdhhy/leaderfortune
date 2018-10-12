@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富查询系统 - 资金流水</title>
+    <title>礼德财富查询系统 - 回款记录</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -44,7 +44,7 @@
         jQuery(function ($) {
             var memberNo = $.getUrlParam("memberNo");
 
-            var url = "/memberFunds.jspx?memberNo=" + memberNo;
+            var url = "/memberReturn.jspx?memberNo=" + memberNo;
 
             function showMemberInfo(memberNo) {
                 $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
@@ -58,41 +58,42 @@
             showMemberInfo(memberNo);
             var myTable = $('#dynamic-table')
             //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
-            /*绑定的银行卡号,微商银行账号,资金变动金额,资金总额,不可提现金额,现金,冻结,资金变动说明,借款项目名称,借款订单号,时间,资金变动类型,变动类型*/
+            /*绑定的银行卡号,微商银行账号,借款项目名称,借款订单号,资金总额,应还本金,应还利息,"收款期数/总期数",
+        要求还款时间,借款用户还款时间,提前还款时间,交易状况,类型,还款状态*/
                 .DataTable({
                     bAutoWidth: false,
                     "columns": [
-
-                        {"data": "时间", "sClass": "center", width: "160px"},
+                        {"data": "借款订单号", "sClass": "center"},
                         {"data": "绑定的银行卡号", "sClass": "center"},
                         {"data": "微商银行账号", "sClass": "center"},
-                        {"data": "资金变动金额", "sClass": "center"},
-                        {"data": "资金总额", "sClass": "center"},
-                        {"data": "不可提现金额", "sClass": "center"},
-                        {"data": "现金", "sClass": "center"},
-                        {"data": "冻结", "sClass": "center"},
-                        {"data": "资金变动说明", "sClass": "center"},
                         {"data": "借款项目名称", "sClass": "center"},
-                        {"data": "借款订单号", "sClass": "center"},
-                        {"data": "变动类型", "sClass": "center"},
-                        {"data": "资金变动类型", "sClass": "center"}
+                        {"data": "资金总额", "sClass": "center"},
+                        {"data": "应还本金", "sClass": "center"},
+                        {"data": "应还利息", "sClass": "center"},
+                        {"data": "收款期数/总期数", "sClass": "center"},
+                        {"data": "要求还款时间", "sClass": "center"},
+                        {"data": "借款用户还款时间", "sClass": "center"},
+                        {"data": "提前还款时间", "sClass": "center"},
+                        {"data": "交易状况", "sClass": "center"},
+                        {"data": "类型", "sClass": "center"},
+                        {"data": "还款状态", "sClass": "center"}
                     ],
 
                     'columnDefs': [
-
-                        {"orderable": false, className: 'text-center', 'targets': 0, title: '时间'},
+                        {"orderable": false, className: 'text-center', "targets": 0, title: '借款订单号'},
                         {"orderable": false, className: 'text-center', "targets": 1, title: '绑定的银行卡号'},
                         {"orderable": false, className: 'text-center', "targets": 2, title: '微商银行账号'},
-                        {"orderable": false, className: 'text-center', "targets": 3, title: '资金变动金额'},
+                        {"orderable": false, className: 'text-center', "targets": 3, title: '借款项目名称'},
                         {"orderable": false, className: 'text-center', "targets": 4, title: '资金总额'},
-                        {"orderable": false, className: 'text-center', "targets": 5, title: '不可提现金额'},
-                        {"orderable": false, className: 'text-center', "targets": 6, title: '现金'},
-                        {"orderable": false, className: 'text-center', "targets": 7, title: '冻结'},
-                        {"orderable": false, className: 'text-center', "targets": 8, title: '资金变动说明'},
-                        {"orderable": false, className: 'text-center', "targets": 9, title: '借款项目名称'},
-                        {"orderable": false, className: 'text-center', "targets": 10, title: '借款订单号'},
-                        {"orderable": false, className: 'text-center', "targets": 11, title: '变动类型'},
-                        {"orderable": false, className: 'text-center', "targets": 12, title: '资金变动类型'}
+                        {"orderable": false, className: 'text-center', "targets": 5, title: '应还本金'},
+                        {"orderable": false, className: 'text-center', "targets": 6, title: '应还利息'},
+                        {"orderable": false, className: 'text-center', "targets": 7, title: '收款期数/总期数'},
+                        {"orderable": false, className: 'text-center', "targets": 8, title: '要求还款时间'},
+                        {"orderable": false, className: 'text-center', "targets": 9, title: '借款用户还款时间'},
+                        {"orderable": false, className: 'text-center', "targets": 10, title: '提前还款时间'},
+                        {"orderable": false, className: 'text-center', "targets": 11, title: '交易状况'},
+                        {"orderable": false, className: 'text-center', "targets": 12, title: '类型'},
+                        {"orderable": false, className: 'text-center', "targets": 13, title: '还款状态'}
 
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
@@ -103,6 +104,15 @@
                     searching: false,
                     "ajax": url,
                     "processing": true,
+                   /* "footerCallback": function (tfoot, data, start, end, display) {
+                        var total = 0.0;
+                        $.each(data, function (index, value) {
+                            if (value["投资状态"] === '投资成功')
+                                total += value["投资金额"];
+                        });
+
+                        $('#succeedSum').text('，本页投资成功合计： ' + accounting.formatMoney(total, '￥'));
+                    },*/
                     select: {style: 'single'}
                 });
             /* myTable.on('order.dt search.dt', function () {
@@ -166,7 +176,7 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span> ，资金流水
+                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span> ，回款记录<span id="succeedSum"></span>
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->

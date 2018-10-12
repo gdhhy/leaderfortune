@@ -82,23 +82,38 @@
                         {
                             "orderable": false, "searchable": false, className: 'text-center', "targets": 5, title: '充值记录',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="deposit"  data-memberNo="{0}">{1}</a>'.format(row["memberNo"], data);
+                                return '<a href="#" class="hasDetail"  data-Url="/memberDeposit.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
                             }
                         },
                         {
                             "orderable": false, "searchable": false, className: 'text-center', "targets": 6, title: '提现记录',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="withdraw"  data-memberNo="{0}">{1}</a>'.format(row["memberNo"], data);
+                                return '<a href="#" class="hasDetail" data-Url="/memberWithdraw.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
                             }
                         },
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 7, title: '还款记录'},
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 8, title: '回款记录'},
-                        {"orderable": false, "searchable": false, className: 'text-center', "targets": 9, title: '投资记录'},
+                        {
+                            "orderable": false, "searchable": false, className: 'text-center', "targets": 7, title: '还款记录',
+                            render: function (data, type, row, meta) {
+                                return '<a href="#" class="hasDetail" data-Url="/memberRepayment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                            }
+                        },
+                        {
+                            "orderable": false, "searchable": false, className: 'text-center', "targets": 8, title: '回款记录',
+                            render: function (data, type, row, meta) {
+                                return '<a href="#" class="hasDetail" data-Url="/memberReturn.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                            }
+                        },
+                        {
+                            "orderable": false, "searchable": false, className: 'text-center', "targets": 9, title: '投资记录',
+                            render: function (data, type, row, meta) {
+                                return '<a href="#" class="hasDetail" data-Url="/memberInvestment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
+                            }
+                        },
 
                         {
                             "orderable": false, "searchable": false, className: 'text-center', "targets": 10, title: '资金流水',
                             render: function (data, type, row, meta) {
-                                return '<a href="#" class="funds" data-memberNo="{0}">{1}</a>'.format(row["memberNo"], data);
+                                return '<a href="#" class="hasDetail" data-Url="/memberFunds.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data);
                             }
                         },
                         {"orderable": false, "searchable": false, className: 'text-center', "targets": 11, title: '标的信息'}
@@ -135,17 +150,8 @@
                     window.open(url, "_blank");
                 });
 
-                $('#dynamic-table tr').find('.withdraw').click(function () {
-                    url = "/memberWithdraw.jsp?memberNo={0}".format($(this).attr("data-memberNo"));
-                    window.open(encodeURI(encodeURI(url)), "_blank");
-                });
-                $('#dynamic-table tr').find('.deposit').click(function () {
-                    url = "/memberDeposit.jsp?memberNo={0}".format($(this).attr("data-memberNo"));
-                    window.open(encodeURI(encodeURI(url)), "_blank");
-                });
-                $('#dynamic-table tr').find('.funds').click(function () {
-                    url = "/memberFunds.jsp?memberNo={0}".format($(this).attr("data-memberNo"));
-                    window.open(encodeURI(encodeURI(url)), "_blank");
+                $('#dynamic-table tr').find('.hasDetail').click(function () {
+                    window.open(encodeURI(encodeURI($(this).attr("data-Url"))), "_blank");
                 });
             });
             $('.btn-success').click(function () {

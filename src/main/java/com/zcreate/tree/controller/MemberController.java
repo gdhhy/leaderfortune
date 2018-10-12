@@ -118,12 +118,13 @@ public class MemberController {
         result.put("recordsFiltered", recordCount);
         return gson.toJson(result);
     }
+
     @ResponseBody
     @RequestMapping(value = "/memberFunds", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String memberFunds(@RequestParam(value = "memberNo", required = false) Integer memberNo,
-                                @RequestParam(value = "draw", required = false) Integer draw,
-                                @RequestParam(value = "start", required = false) Integer start,
-                                @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+                              @RequestParam(value = "draw", required = false) Integer draw,
+                              @RequestParam(value = "start", required = false) Integer start,
+                              @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
         Map<String, Object> param = new HashMap<>();
         param.put("user_id", memberNo);
         param.put("start", start);
@@ -132,6 +133,66 @@ public class MemberController {
         int recordCount = memberMapper.getFundsCount(param);
         Map<String, Object> result = new HashMap<>();
         result.put("data", memberMapper.selectFunds(param));
+        result.put("draw", draw);/*draw——number类型——请求次数计数器，每次发送给服务器后原封返回，因为请求是异步的，为了确保每次请求都能对应到服务器返回到的数据。*/
+        result.put("recordsTotal", recordCount);
+        result.put("recordsFiltered", recordCount);
+        return gson.toJson(result);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/memberInvestment", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String memberInvestment(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                                   @RequestParam(value = "draw", required = false) Integer draw,
+                                   @RequestParam(value = "start", required = false) Integer start,
+                                   @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("user_id", memberNo);
+        param.put("start", start);
+        param.put("length", length);
+
+        int recordCount = memberMapper.getInvestmentCount(param);
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", memberMapper.selectInvestment(param));
+        result.put("draw", draw);/*draw——number类型——请求次数计数器，每次发送给服务器后原封返回，因为请求是异步的，为了确保每次请求都能对应到服务器返回到的数据。*/
+        result.put("recordsTotal", recordCount);
+        result.put("recordsFiltered", recordCount);
+        return gson.toJson(result);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/memberReturn", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String memberReturn(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                               @RequestParam(value = "draw", required = false) Integer draw,
+                               @RequestParam(value = "start", required = false) Integer start,
+                               @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("user_id", memberNo);
+        param.put("start", start);
+        param.put("length", length);
+
+        int recordCount = memberMapper.getReturnCount(param);
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", memberMapper.selectReturn(param));
+        result.put("draw", draw);/*draw——number类型——请求次数计数器，每次发送给服务器后原封返回，因为请求是异步的，为了确保每次请求都能对应到服务器返回到的数据。*/
+        result.put("recordsTotal", recordCount);
+        result.put("recordsFiltered", recordCount);
+        return gson.toJson(result);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/memberRepayment", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String memberRepayment(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                                  @RequestParam(value = "draw", required = false) Integer draw,
+                                  @RequestParam(value = "start", required = false) Integer start,
+                                  @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("user_id", memberNo);
+        param.put("start", start);
+        param.put("length", length);
+
+        int recordCount = memberMapper.getRepaymentCount(param);
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", memberMapper.selectRepayment(param));
         result.put("draw", draw);/*draw——number类型——请求次数计数器，每次发送给服务器后原封返回，因为请求是异步的，为了确保每次请求都能对应到服务器返回到的数据。*/
         result.put("recordsTotal", recordCount);
         result.put("recordsFiltered", recordCount);
