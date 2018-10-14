@@ -153,7 +153,7 @@
                 if (json.data.length > 0)
                     for (var i = 0; i < json.data.length; i++) {
                         var memberInfo = JSON.parse(json.data[i].memberInfo);
-                        json.data[i].usertype = memberInfo['基本信息']['类型'];
+                        json.data[i].usertype = memberInfo['基本信息']['用户类型'];
                         json.data[i].deposit = memberInfo['资金']['总充值'];
                         json.data[i].withdraw = memberInfo['资金']['总提现'];
                         json.data[i].investment = memberInfo['资金']['总投资金额'];

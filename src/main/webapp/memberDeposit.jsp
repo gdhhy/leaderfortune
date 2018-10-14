@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富 - 充值记录</title>
+    <title>充值记录 - 礼德财富</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -53,6 +53,8 @@
                         $('#idCard').text(result.data[0].idCard);
                         var memberInfo = JSON.parse(result.data[0].memberInfo);
                         $('#bankCardNo').text(memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号);
+
+                        $(document).attr("title", result.data[0].realName + ' - ' + $(document).attr("title"));//修改title值
                     }
                 });
             }

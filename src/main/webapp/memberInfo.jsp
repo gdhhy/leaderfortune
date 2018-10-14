@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富 - 成员信息</title>
+    <title>成员信息 - 礼德财富</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -127,6 +127,7 @@
             function showMemberInfo(memberNo) {
                 $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
                     if (result.data.length > 0) {
+                        $(document).attr("title", result.data[0].realName + ' - ' + $(document).attr("title"));//修改title值
                         var memberInfo = JSON.parse(result.data[0].memberInfo);
                         /*  memberInfo["基本信息"]["姓名"] = result.data[0].realName;
                           memberInfo["基本信息"]["身份证号码"] = result.data[0].idCard;
