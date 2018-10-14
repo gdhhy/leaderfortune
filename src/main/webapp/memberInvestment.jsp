@@ -87,7 +87,12 @@
                         {"orderable": false, "targets": 3, title: '总加息利率'},
                         {"orderable": false, "targets": 4, title: '借款项目名称'},
                         {"orderable": false, "targets": 5, title: '借款订单号'},
-                        {"orderable": false, "targets": 6, title: '借款用户'},
+                        {
+                            "orderable": false, "targets": 6, title: '借款用户',
+                            render: function (data, type, row, meta) {
+                                return '<a href="#"  data-Url="memberInfo.jspx?userName={0}">{1}</a>'.format(data, data);
+                            }
+                        },
                         {"orderable": false, "targets": 7, title: '是否自动投标'},
                         {"orderable": false, "targets": 8, title: '债权申请转让'},
                         {"orderable": false, "targets": 9, title: '放款状态'},
@@ -126,7 +131,11 @@
                 if (json.recordsTotal > 0)
                     $('#wechatCard').text(json.data[0].微商银行账号);
             });
-
+            myTable.on('draw', function () {
+                $('#dynamic-table tr').find('a:eq(0)').click(function () {
+                    window.open($(this).attr("data-Url"), "_blank");
+                });
+            });
             //$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
             new $.fn.dataTable.Buttons(myTable, {
                 buttons: [

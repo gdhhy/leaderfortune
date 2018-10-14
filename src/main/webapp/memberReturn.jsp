@@ -106,14 +106,17 @@
                     "processing": true,
                     "footerCallback": function (tfoot, data, start, end, display) {
                         var total = 0.0;
+                        var total2 = 0.0;
                         $.each(data, function (index, value) {
-                            if (value["还款状态"].indexOf('已还') > 0)
-
+                            if (value["还款状态"].indexOf('已还') > 0) {
                                 total += value["资金总额"];
+                                total2 += value["应收本金"];
+                            }
                         });
 
                         // Update footer
-                        $(tfoot).find('th').eq(0).html('已还资金总额合计： ' + accounting.formatMoney(total, '￥'));
+                        $(tfoot).find('th').eq(0).html('资金总额合计： ' + accounting.formatMoney(total, '￥')
+                            +' &nbsp;&nbsp;&nbsp;&nbsp;应收本金合计： ' + accounting.formatMoney(total2, '￥'));
                     },
                     scrollY: '60vh',
                     select: {style: 'single'}

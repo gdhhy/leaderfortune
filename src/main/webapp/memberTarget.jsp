@@ -56,8 +56,15 @@
     <script type="text/javascript">
         jQuery(function ($) {
             function showDetail(d) {
+                var investors = d["投资人"].split(",");
+                var html = "";
+                if (investors.length > 0) {
+                    $.each(investors, function (i, item) {
+                        html += "<a href='memberInfo.jspx?realName={0}' target='_blank'>{1}</a>&nbsp;&nbsp;".format(item,item);
+                    });
+                }
                 return $('#rowDetail').html().format(d["银行名称"], d["支行名称"], d["归属银行"], d["开户支行"], d["(旧)银行卡号"], d["(旧)汇付天下用户"], d["(旧)汇付天下账号"],
-                    d["合作机构"], d["委托人姓名"], d["投资人"], d["借款类型"], d["签单号"], d["签单时间"], d["到期时间"]);
+                    d["合作机构"], d["委托人姓名"], html, d["借款类型"], d["签单号"], d["签单时间"], d["到期时间"]);
             }
 
             var memberNo = $.getUrlParam("memberNo");

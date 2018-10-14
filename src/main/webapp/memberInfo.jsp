@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>成员信息 - 礼德财富</title>
+    <title><c:out value="${member.realName}"/> - 成员信息 - 礼德财富</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -79,7 +79,6 @@
                 '{1}' +
                 '</div>' +
                 '</div>';
-            showMemberInfo(<c:out value="${member.memberNo}"/>);
 
             function showDivObject(propName, obj) {
                 var keyVals = [];
@@ -124,41 +123,33 @@
                 return divObject.format(propName, html);
             }
 
-            function showMemberInfo(memberNo) {
-                $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
-                    if (result.data.length > 0) {
-                        $(document).attr("title", result.data[0].realName + ' - ' + $(document).attr("title"));//修改title值
-                        var memberInfo = JSON.parse(result.data[0].memberInfo);
-                        /*  memberInfo["基本信息"]["姓名"] = result.data[0].realName;
-                          memberInfo["基本信息"]["身份证号码"] = result.data[0].idCard;
-                          memberInfo["基本信息"]["用户名"] = result.data[0].userName;*/
+            var infoString = '<c:out value="${member.memberInfo}" escapeXml="false"/>';
 
-                        var baseInfo = {"姓名": result.data[0].realName, "身份证号码": result.data[0].idCard, "用户名": result.data[0].userName};
-                        $.each(memberInfo["基本信息"], function (key, val) {
-                            baseInfo[key] = val;
-                        });
+            showMemberInfo();
 
-                        if (memberInfo) {
-                            var html1 = "";
-                            var html2 = "";
-                            /* $.each(memberInfo, function (key, val) {
-                                 var objType = typeof (val);
-                                 if (val instanceof Array) html += showTable(key, val);
-                                 else if (objType === "object") html += showDivObject(key, val);
-                             });*/
-                            html1 += showDivObject("基本信息", baseInfo);
-                            html2 += showDivObject("资金", memberInfo["资金"]);
-                            html2 += showDivObject("旧资料", memberInfo["旧资料"]);
-                            html1 += showDivObject("银行账户", memberInfo["银行账户"]);
-                            $('#aaa').html(html1);
-                            $('#bbb').html(html2);
+            function showMemberInfo() {
+                if (infoString !== '') {
+                    var memberInfo = JSON.parse(infoString);
+                    var baseInfo = {"姓名": '<c:out value="${member.realName}"/>', "身份证号码": '<c:out value="${member.idCard}"/>', "用户名": '<c:out value="${member.userName}"/>'};
+                    $.each(memberInfo["基本信息"], function (key, val) {
+                        baseInfo[key] = val;
+                    });
 
-                            //console.log($(".profile-info-name:contains('姓名')").next().html());
-                            $(".profile-info-name:contains('姓名')").next().html("<div class='bigger-150' '>"+$(".profile-info-name:contains('姓名')").next().html()+"</div>");
-                            $(".profile-info-name:contains('身份证号码')").next().html("<div class='bigger-130' '>"+$(".profile-info-name:contains('身份证号码')").next().html()+"</div>");
-                        }
-                    }
-                });
+                    //console.log("hhh");
+                    var html1 = "";
+                    var html2 = "";
+                    html1 += showDivObject("基本信息", baseInfo);
+                    html2 += showDivObject("资金", memberInfo["资金"]);
+                    html2 += showDivObject("旧资料", memberInfo["旧资料"]);
+                    html1 += showDivObject("银行账户", memberInfo["银行账户"]);
+                    $('#aaa').html(html1);
+                    $('#bbb').html(html2);
+
+                    //console.log($(".profile-info-name:contains('姓名')").next().html());
+                    $(".profile-info-name:contains('姓名')").next().html("<div class='bigger-150' '>" + $(".profile-info-name:contains('姓名')").next().html() + "</div>");
+                    $(".profile-info-name:contains('身份证号码')").next().html("<div class='bigger-130' '>" + $(".profile-info-name:contains('身份证号码')").next().html() + "</div>");
+                }
+
             }
 
             $('button:last').click(function () {

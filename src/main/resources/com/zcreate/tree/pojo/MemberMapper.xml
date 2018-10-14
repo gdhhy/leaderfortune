@@ -32,11 +32,11 @@
 
     <sql id="queryUserWhere">
         <where>
-            <if test="param.memberNo!=null">AND member_no = #{param.memberNo:INTEGER}</if>
-            <if test="param.userName!=null">AND user_name = #{param.userName:INTEGER}</if>
-            <if test="param.realName!=null">AND real_name = #{param.realName:VARCHAR}</if>
-            <if test="param.phone!=null">AND phone = #{param.phone:VARCHAR}</if>
-            <if test="param.idCard!=null">AND id_card = #{param.idCard:VARCHAR}</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.memberNo)">AND member_no = #{param.memberNo:VARCHAR}</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.userName)">AND user_name = #{param.userName:VARCHAR}</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.realName)">AND real_name = #{param.realName:VARCHAR}</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.phone)">AND phone = #{param.phone:VARCHAR}</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.idCard)">AND id_card = #{param.idCard:VARCHAR}</if>
         </where>
     </sql>
     <select id="getMemberCount" resultType="int" parameterType="java.util.Map" useCache="true">

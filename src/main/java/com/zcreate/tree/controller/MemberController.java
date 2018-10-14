@@ -2,7 +2,6 @@ package com.zcreate.tree.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.zcreate.tree.dao.MemberMapper;
 import com.zcreate.tree.pojo.Member;
 import org.slf4j.Logger;
@@ -50,7 +49,7 @@ public class MemberController {
         param.put("start", start);
         param.put("length", length);
         int recordCount = memberMapper.getMemberCount(param);
-        List<Member> members=memberMapper.selectMember(param);
+        List<Member> members = memberMapper.selectMember(param);
        /* for(Member map:members){
             JsonObject json=gson.fromJson(map.getMemberInfo(), JsonObject.class);
             map.put("usertype",((JsonObject)json.get("基本信息")).get("类型"));
@@ -77,13 +76,20 @@ public class MemberController {
 
 
     @RequestMapping(value = "/memberInfo", method = RequestMethod.GET)
-    public String memberInfo(@RequestParam(value = "memberNo", required = false) String memberNo, ModelMap model) {
-        log.debug("url = memberInfo");
+    public String memberInfo(@RequestParam(value = "memberNo", required = false) String memberNo,
+                             @RequestParam(value = "realName", required = false) String realName,
+                             @RequestParam(value = "userName", required = false) String userName,
+                             ModelMap model) {
+        //log.debug("url = memberInfo");
         Map<String, Object> param = new HashMap<>();
         param.put("memberNo", memberNo);
+        param.put("realName", realName);
+        param.put("userName", userName);
         List<Member> members = memberMapper.selectMember(param);
         if (members.size() >= 1)
             model.addAttribute("member", members.get(0));
+       /* else
+            model.addAttribute("member", new Member());*/
 
         return "/memberInfo";
     }
