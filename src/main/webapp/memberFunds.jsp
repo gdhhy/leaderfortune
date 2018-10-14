@@ -99,7 +99,7 @@
                     language: {
                         url: '/js/datatables/datatables.chinese.json'
                     },
-                    searching: false,
+                    scrollY: '60vh',
                     "ajax": url,
                     "processing": true,
                     select: {style: 'single'}

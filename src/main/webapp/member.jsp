@@ -54,7 +54,6 @@
                     bAutoWidth: false,
                     "columns": [
                         {"data": "memberNo", "sClass": "center"},
-                        {"data": "memberNo", "sClass": "center"},
                         {"data": "userName", "sClass": "center", "defaultContent": ""},
                         {"data": "realName", "sClass": "center", "defaultContent": ""},
                         {"data": "idCard", "sClass": "center"},
@@ -72,55 +71,59 @@
 
                     'columnDefs': [
                         {"orderable": false, 'targets': 0, width: 20},
-                        {"orderable": false, "targets": 1, title: 'id', "visible": false},
                         {
-                            "orderable": false, "targets": 2, title: '用户名',
+                            "orderable": false, "targets": 1, title: '用户名',
                             render: function (data, type, row, meta) {
                                 return '<a href="#"  data-memberNo="{0}">{1}</a>'.format(row["memberNo"], data);
                             }
                         },
-                        {"orderable": false, "targets": 3, title: '真实姓名'},
-                        {"orderable": false, "targets": 4, title: '身份证号码'},
-                        {"orderable": false, "targets": 5, title: '电话号码'},
-                        {"orderable": false, "targets": 6, title: '用户类型'},
+                        {"orderable": false, "targets": 2, title: '真实姓名'},
+                        {"orderable": false, "targets": 3, title: '身份证号码'},
+                        {"orderable": false, "targets": 4, title: '电话号码'},
+                        {"orderable": false, "targets": 5, title: '用户类型'},
                         {
-                            "orderable": false, "targets": 7, title: '总充值',
+                            "orderable": false, "targets": 6, title: '总充值',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail"  data-Url="/memberDeposit.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 8, title: '总提现',
+                            "orderable": false, "targets": 7, title: '总提现',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberWithdraw.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 9, title: '还款记录',
+                            "orderable": false, "targets": 8, title: '还款记录',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberRepayment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 10, title: '回款记录',
+                            "orderable": false, "targets": 9, title: '回款记录',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberReturn.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 11, title: '投资记录',
+                            "orderable": false, "targets": 10, title: '投资记录',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberInvestment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
 
                         {
-                            "orderable": false, "targets": 12, title: '资金流水',
+                            "orderable": false, "targets": 11, title: '资金流水',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberFunds.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
-                        {"orderable": false, "targets": 13, title: '标的信息'}
+                        {
+                            "orderable": false, "targets": 12, title: '标的信息',
+                            render: function (data, type, row, meta) {
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberTarget.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                            }
+                        }
                     ],
                     "aLengthMenu": [[20, 100, 1000], ["20", "100", "1000"]],//二组数组，第一组数量，第二组说明文字;
                     "aaSorting": [],//"aaSorting": [[ 4, "desc" ]],//设置第5个元素为默认排序

@@ -101,7 +101,6 @@
                     language: {
                         url: '/js/datatables/datatables.chinese.json'
                     },
-                    searching: false,
                     "ajax": url,
                     "processing": true,
                     "footerCallback": function (tfoot, data, start, end, display) {
@@ -115,6 +114,7 @@
                         // Update footer
                         $(tfoot).find('th').eq(0).html('已还资金总额合计： ' + accounting.formatMoney(total, '￥'));
                     },
+                    scrollY: '60vh',
                     select: {style: 'single'}
                 });
             myTable.on('order.dt search.dt', function () {

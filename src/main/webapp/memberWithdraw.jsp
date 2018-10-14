@@ -89,7 +89,7 @@
                     language: {
                         url: '/js/datatables/datatables.chinese.json'
                     },
-                    searching: false,
+                    scrollY: '60vh',
                     "ajax": url,
                     "processing": true,
                     "footerCallback": function (tfoot, data, start, end, display) {
