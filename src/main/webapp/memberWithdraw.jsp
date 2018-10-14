@@ -68,8 +68,8 @@
                         {"data": "时间", "sClass": "center"},
                         {"data": "订单号", "sClass": "center"},
                         {"data": "取现银行卡号", "sClass": "center"},
-                        {"data": "充值金额", "sClass": "center"},
-                        {"data": "充值手续费", "sClass": "center"},
+                        {"data": "提现金额", "sClass": "center"},
+                        {"data": "提现手续费", "sClass": "center"},
                         {"data": "取现类型", "sClass": "center"},
                         {"data": "状态", "sClass": "center"}
                     ],

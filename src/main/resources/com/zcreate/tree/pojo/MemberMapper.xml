@@ -79,7 +79,7 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-        </choose>
+        </choose>收
     </select>-->
     <!-- 标的信息 -->
     <select id="getTargetCount" resultType="int" parameterType="java.util.Map" useCache="true">
@@ -131,7 +131,7 @@
         where user_id = #{param.user_id:INTEGER}
     </select>
     <select id="selectWithdraw" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,充值金额,充值手续费,取现类型,取现银行卡号,订单号,状态,时间
+        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,提现金额,提现手续费,取现类型,取现银行卡号,订单号,状态,时间
         FROM tixian where user_id = #{param.user_id:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
@@ -169,7 +169,7 @@
         where user_id = #{param.user_id:INTEGER}
     </select>
     <select id="selectReturn" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,借款项目名称,借款订单号,资金总额,应还本金,应还利息,`收款期数/总期数`,
+        SELECT user_id,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,借款项目名称,借款订单号,资金总额,应收本金,应收利息,`收款期数/总期数`,
         要求还款时间,借款用户还款时间,ifnull(提前还款时间,'')提前还款时间,交易状况,类型,还款状态 FROM huikuan
         where user_id = #{param.user_id:INTEGER}
         <choose>
@@ -188,7 +188,7 @@
         where user_id = #{param.user_id:INTEGER}
     </select>
     <select id="selectInvestment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
+        SELECT user_id,用户名,电话号码,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
         ifnull(放款状态,'')放款状态,投资状态,ifnull(交易号,'')交易号,时间 FROM touzi
         where user_id = #{param.user_id:INTEGER}
         <choose>
