@@ -142,18 +142,6 @@
                     },
                     "processing": true,
                     "serverSide": true,
-                    /*"fnDrawCallback": function(){
-                        var api = this.api();
-                        //var startIndex= api.context[0]._iDisplayStart;//获取到本页开始的条数
-                        api.column(0).nodes().each(function(cell, i) {
-
-                            //此处 startIndex + i + 1;会出现翻页序号不连续，主要是因为startIndex 的原因,去掉即可。
-                            //cell.innerHTML = startIndex + i + 1;
-
-                            cell.innerHTML =  i + 1;
-
-                        });
-                    },*/
                     select: {style: 'single'}
                 });
             /*myTable.on('order.dt search.dt', function () {
@@ -166,8 +154,8 @@
                     for (var i = 0; i < json.data.length; i++) {
                         var memberInfo = JSON.parse(json.data[i].memberInfo);
                         json.data[i].usertype = memberInfo['基本信息']['类型'];
-                        json.data[i].deposit = memberInfo['资金汇总']['总充值'];
-                        json.data[i].withdraw = memberInfo['资金汇总']['总提现'];
+                        json.data[i].deposit = memberInfo['资金']['总充值'];
+                        json.data[i].withdraw = memberInfo['资金']['总提现'];
                     }
             });
             myTable.on('draw', function () {

@@ -2,7 +2,9 @@ package com.zcreate.tree.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.zcreate.tree.dao.MemberMapper;
+import com.zcreate.tree.pojo.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +49,15 @@ public class MemberController {
         param.put("threeThirty", threeThirty);
         param.put("start", start);
         param.put("length", length);
-        List<Map<String, Object>> members = memberMapper.selectMember(param);
         int recordCount = memberMapper.getMemberCount(param);
+        List<Member> members=memberMapper.selectMember(param);
+       /* for(Member map:members){
+            JsonObject json=gson.fromJson(map.getMemberInfo(), JsonObject.class);
+            map.put("usertype",((JsonObject)json.get("基本信息")).get("类型"));
+            map.put("deposit",((JsonObject)json.get("资金汇总")).get("总充值"));
+            map.put("withdraw",((JsonObject)json.get("资金汇总")).get("总提现"));
+            log.debug("usertype="+map.get("usertype"));
+        }*/
 
         Map<String, Object> result = new HashMap<>();
         result.put("data", members);
@@ -72,7 +81,7 @@ public class MemberController {
         log.debug("url = memberInfo");
         Map<String, Object> param = new HashMap<>();
         param.put("memberNo", memberNo);
-        List<Map<String, Object>> members = memberMapper.selectMember(param);
+        List<Member> members = memberMapper.selectMember(param);
         if (members.size() >= 1)
             model.addAttribute("member", members.get(0));
 
