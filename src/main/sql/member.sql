@@ -61,3 +61,5 @@ update member A
 join (select user_id,count(user_id)  cc from touzi group by  user_id  ) B on A.member_no=B.user_id set A.investment_count=B.cc;
 update member A
 join (select 用户id,count(用户id)  cc from useraccount group by  用户id  ) B on A.member_no=B.用户id set A.funds_count=B.cc;
+
+delete  from member where member_no ='';

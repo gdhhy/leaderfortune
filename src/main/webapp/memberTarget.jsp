@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富 标的信息</title>
+    <title>礼德财富 - 标的信息</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -48,20 +48,18 @@
         tr.details td.details-control {
             background: url('resources/details_close.png') no-repeat center center;
         }
+
+        .profile-info-value {
+            background-color: white
+        }
     </style>
     <script type="text/javascript">
         jQuery(function ($) {
             function showDetail(d) {
-                return 'Full name:  <br>' +
-                    'Salary:  <br>' +
-                    'The child row can contain any data you wish, including links, images, inner tables etc.';
+                return $('#rowDetail').html().format(d["银行名称"], d["支行名称"], d["归属银行"], d["开户支行"], d["(旧)银行卡号"], d["(旧)汇付天下用户"], d["(旧)汇付天下账号"],
+                    d["合作机构"], d["委托人姓名"], d["投资人"], d["借款类型"], d["签单号"], d["签单时间"], d["到期时间"]);
             }
 
-            function kk() {
-                return $('#rowDetail').html();
-            }
-
-            // kk();
             var memberNo = $.getUrlParam("memberNo");
 
             var url = "/memberTarget.jspx?memberNo=" + memberNo;
@@ -83,11 +81,8 @@
             /*
             订单号, 项目名称,借款金额,借款利息,借款期数,总成本,还款方式,借款用途,上线时间,满标时间,放款时间, 债权人,状态
 
-        银行名称,支行名称,到期时间,归属银行,
-        合作机构,委托人姓名,投资人,借款类型,签单号,签单时间,开户支行,
-        (旧)银行卡号, (旧)汇付天下用户,(旧)汇付天下账号
-
-
+        银行名称,支行名称,归属银行,开户支行, (旧)银行卡号, (旧)汇付天下用户,(旧)汇付天下账号
+        合作机构,委托人姓名,投资人,借款类型,签单号,签单时间,到期时间,
         */
                 .DataTable({
                     bAutoWidth: false,
@@ -111,7 +106,7 @@
 
                     'columnDefs': [
                         {"orderable": false, 'targets': 0, width: 20},
-                        {"orderable": false, 'targets': 2, title: '订单号'},
+                        {"orderable": true, 'targets': 2, title: '订单号'},
                         {"orderable": false, 'targets': 3, title: '项目名称'},
                         {"orderable": false, "targets": 4, title: '借款金额'},
                         {"orderable": false, "targets": 5, title: '借款利息'},
@@ -119,10 +114,15 @@
                         {"orderable": false, "targets": 7, title: '总成本'},
                         {"orderable": false, "targets": 8, title: '还款方式'},
                         {"orderable": false, "targets": 9, title: '借款用途'},
-                        {"orderable": false, "targets": 10, title: '上线时间'},
-                        {"orderable": false, "targets": 11, title: '满标时间'},
-                        {"orderable": false, "targets": 12, title: '放款时间'},
-                        {"orderable": false, "targets": 13, title: '债权人'},
+                        {"orderable": true, "targets": 10, title: '上线时间'},
+                        {"orderable": true, "targets": 11, title: '满标时间'},
+                        {"orderable": true, "targets": 12, title: '放款时间'},
+                        {
+                            "orderable": false, "targets": 13, title: '债权人',
+                            render: function (data, type, row, meta) {
+                                return '<a href="#"  data-memberNo="{0}">{1}</a>'.format(row["债权人"], row["债权人姓名"] === '' ? '（空）' : row["债权人姓名"]);
+                            }
+                        },
                         {"orderable": false, "targets": 14, title: '状态'}
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
@@ -132,17 +132,8 @@
                     },
                     "ajax": url,
                     scrollY: '60vh',
-                    "processing": true,
-                    "footerCallback": function (tfoot, data, start, end, display) {
-                        var total = 0.0;
-                        $.each(data, function (index, value) {
-                            if (value["投资状态"] === '投资成功')
-                                total += value["投资金额"];
-                        });
-
-                        // Update footer
-                        $(tfoot).find('th').eq(0).html('投资成功金额合计： ' + accounting.formatMoney(total, '￥'));
-                    }/*,
+                    "processing": true
+                    /*,
                     select: {style: 'single'}*/
                 });
             var detailRows = [];
@@ -160,7 +151,7 @@
                 }
                 else {
                     tr.addClass('details');
-                    row.child(kk(row.data())).show();
+                    row.child(showDetail(row.data())).show();
 
                     // Add to the 'open' array
                     if (idx === -1) {
@@ -173,6 +164,10 @@
             myTable.on('draw', function () {
                 $.each(detailRows, function (i, id) {
                     $('#' + id + ' td.details-control').trigger('click');
+                });
+                $('#dynamic-table tr').find('a:eq(0)').click(function () {
+                    url = "/memberInfo.jspx?memberNo={0}".format($(this).attr("data-memberNo"));
+                    window.open(url, "_blank");
                 });
             });
             myTable.on('order.dt search.dt', function () {
@@ -250,13 +245,6 @@
                                 <!-- div.dataTables_borderWrap -->
                                 <div>
                                     <table id="dynamic-table" class="table table-striped table-bordered table-hover">
-                                        <tfoot>
-                                        <tr>
-                                            <th colspan="12" style="text-align:right">
-                                                <div id="footTotal">&nbsp;</div>
-                                            </th>
-                                        </tr>
-                                        </tfoot>
                                     </table>
                                 </div>
                             </div>
@@ -280,106 +268,134 @@
         </div>
     </div>
 </div><!-- /.main-container -->
-<div class="hidden" id="rowDetail">
+<div class="detail-row hidden" id="rowDetail">
     <div class="table-detail">
         <div class="row">
-            <div class="col-xs-12 col-sm-2">
-                <div class="text-center">
-                    <img height="150" class="thumbnail inline no-margin-bottom" alt="Domain Owner's Avatar" src="../assets/avatars/profile-pic.jpg"/>
-                    <br/>
-                    <div class="width-80 label label-info label-xlg arrowed-in arrowed-in-right">
-                        <div class="inline position-relative">
-                            <a class="user-title-label" href="#">
-                                <i class="ace-icon fa fa-circle light-green"></i>
-                                &nbsp;
-                                <span class="white">Alex M. Doe</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-xs-12 col-sm-7">
+            <div class="col-xs-12 col-sm-6">
                 <div class="space visible-xs"></div>
 
                 <div class="profile-user-info profile-user-info-striped">
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> Username</div>
+                        <div class="profile-info-name" style="width: 120px;"> 银行名称</div>
 
                         <div class="profile-info-value">
-                            <span>alexdoe</span>
+                            <span>{0}</span>
                         </div>
                     </div>
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> Location</div>
+                        <div class="profile-info-name"> 支行名称</div>
 
                         <div class="profile-info-value">
-                            <i class="fa fa-map-marker light-orange bigger-110"></i>
-                            <span>Netherlands, Amsterdam</span>
+                            <span>{1}</span>
                         </div>
                     </div>
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> Age</div>
+                        <div class="profile-info-name"> 归属银行</div>
 
                         <div class="profile-info-value">
-                            <span>38</span>
+                            <span>{2}</span>
                         </div>
                     </div>
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> Joined</div>
+                        <div class="profile-info-name"> 开户支行</div>
 
                         <div class="profile-info-value">
-                            <span>2010/06/20</span>
+                            <span>{3}</span>
                         </div>
                     </div>
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> Last Online</div>
+                        <div class="profile-info-name"> (旧)银行卡号</div>
 
                         <div class="profile-info-value">
-                            <span>3 hours ago</span>
+                            <span>{4}</span>
                         </div>
                     </div>
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> About Me</div>
+                        <div class="profile-info-name"> (旧)汇付天下用户</div>
 
                         <div class="profile-info-value">
-                            <span>Bio</span>
+                            <span>{5}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> (旧)汇付天下账号</div>
+
+                        <div class="profile-info-value">
+                            <span>{6}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xs-12 col-sm-3">
+            <div class="col-xs-12 col-sm-6">
                 <div class="space visible-xs"></div>
-                <h4 class="header blue lighter less-margin">Send a message to Alex</h4>
 
-                <div class="space-6"></div>
+                <div class="profile-user-info profile-user-info-striped">
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> 合作机构</div>
 
-                <form>
-                    <fieldset>
-                        <textarea class="width-100" resize="none" placeholder="Type something…"></textarea>
-                    </fieldset>
-
-                    <div class="hr hr-dotted"></div>
-
-                    <div class="clearfix">
-                        <label class="pull-left">
-                            <input type="checkbox" class="ace"/>
-                            <span class="lbl"> Email me a copy</span>
-                        </label>
-
-                        <button class="pull-right btn btn-sm btn-primary btn-white btn-round" type="button">
-                            Submit
-                            <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110"></i>
-                        </button>
+                        <div class="profile-info-value">
+                            <span>{7}</span>
+                        </div>
                     </div>
-                </form>
+
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> 委托人姓名</div>
+
+                        <div class="profile-info-value">
+                            <span>{8}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> 投资人</div>
+
+                        <div class="profile-info-value">
+                            <span>{9}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> 借款类型</div>
+
+                        <div class="profile-info-value">
+                            <span>{10}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> 签单号</div>
+
+                        <div class="profile-info-value">
+                            <span>{11}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> 签单时间</div>
+
+                        <div class="profile-info-value">
+                            <span>{12}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-row">
+                        <div class="profile-info-name"> 到期时间</div>
+
+                        <div class="profile-info-value">
+                            <span>{13}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </div>

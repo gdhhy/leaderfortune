@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富查询系统</title>
+    <title>礼德财富 - 成员信息</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -74,7 +74,7 @@
                 '</div>';
 
             var divObject = '<div class="widget-main padding-8" >' +
-                '<h5 class="widget-title blue smaller">{0}</h5>' +
+                '<h5 class="widget-title blue bigger-120">{0}</h5>' +
                 '<div class="profile-user-info profile-user-info-striped">' +
                 '{1}' +
                 '</div>' +
@@ -128,10 +128,14 @@
                 $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
                     if (result.data.length > 0) {
                         var memberInfo = JSON.parse(result.data[0].memberInfo);
-                        memberInfo["基本信息"]["身份证号码"] = result.data[0].idCard;
-                        memberInfo["基本信息"]["用户名"] = result.data[0].userName;
-                        memberInfo["基本信息"]["姓名"] = result.data[0].realName;
-                        //$('#baseInfo').html(html);
+                        /*  memberInfo["基本信息"]["姓名"] = result.data[0].realName;
+                          memberInfo["基本信息"]["身份证号码"] = result.data[0].idCard;
+                          memberInfo["基本信息"]["用户名"] = result.data[0].userName;*/
+
+                        var baseInfo = {"姓名": result.data[0].realName, "身份证号码": result.data[0].idCard, "用户名": result.data[0].userName};
+                        $.each(memberInfo["基本信息"], function (key, val) {
+                            baseInfo[key] = val;
+                        });
 
                         if (memberInfo) {
                             var html1 = "";
@@ -141,25 +145,25 @@
                                  if (val instanceof Array) html += showTable(key, val);
                                  else if (objType === "object") html += showDivObject(key, val);
                              });*/
-                            html1 += showDivObject("基本信息", memberInfo["基本信息"]);
-                            html1 += showDivObject("资金", memberInfo["资金"]);
-                            //html1 += showDivObject("资金汇总", memberInfo["资金汇总"]);
+                            html1 += showDivObject("基本信息", baseInfo);
+                            html2 += showDivObject("资金", memberInfo["资金"]);
                             html2 += showDivObject("旧资料", memberInfo["旧资料"]);
-                            html2 += showDivObject("银行账户", memberInfo["银行账户"]);
+                            html1 += showDivObject("银行账户", memberInfo["银行账户"]);
                             $('#aaa').html(html1);
                             $('#bbb').html(html2);
 
+                            //console.log($(".profile-info-name:contains('姓名')").next().html());
+                            $(".profile-info-name:contains('姓名')").next().html("<div class='bigger-150' '>"+$(".profile-info-name:contains('姓名')").next().html()+"</div>");
+                            $(".profile-info-name:contains('身份证号码')").next().html("<div class='bigger-130' '>"+$(".profile-info-name:contains('身份证号码')").next().html()+"</div>");
                         }
-                        //对现金增加连接
-
                     }
                 });
-
             }
 
             $('button:last').click(function () {
                 $(window).attr('location', 'member.jspx');
             });
+
             /*Disclose all folders (expand the entire tree).*/
         })
     </script>

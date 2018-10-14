@@ -88,11 +88,14 @@
         where user_id = #{param.user_id:INTEGER}
     </select>
     <select id="selectTarget" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT 订单号,user_id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,微商银行账号,绑定的银行卡号,ifnull(银行名称,'')银行名称,
+        select A.*,ifnull(B.real_name,'')债权人姓名 from (SELECT 订单号,user_id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,微商银行账号,绑定的银行卡号,ifnull(银行名称,'')银行名称,
         ifnull(支行名称,'')支行名称,ifnull(`(旧)银行卡号`,'') `(旧)银行卡号`, ifnull(归属银行,'')归属银行, ifnull(开户支行,'')开户支行,`(旧)汇付天下用户`,
         `(旧)汇付天下账号`,项目名称,借款金额,借款利息,借款期数,总成本, ifnull(委托人姓名,'')委托人姓名,还款方式,借款用途, ifnull(合作机构,'')合作机构,
         ifnull(投资人,'')投资人, 签单号, ifnull(上线时间,'')上线时间, ifnull(签单时间,'')签单时间, ifnull(满标时间,'')满标时间, ifnull(放款时间,'')放款时间,
-        ifnull(到期时间,'')到期时间,借款类型, ifnull(债权人,'')债权人,状态 FROM biaodi where user_id = #{param.user_id:INTEGER}
+        ifnull(到期时间,'')到期时间,ifnull(借款类型,'')借款类型, ifnull(债权人,'')债权人,状态
+        FROM biaodi A where user_id = #{param.user_id:INTEGER}) A
+        left join member B on A.债权人=B.member_no
+        order by 订单号
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}
