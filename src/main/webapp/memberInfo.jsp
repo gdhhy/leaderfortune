@@ -130,12 +130,12 @@
             function showMemberInfo() {
                 if (infoString !== '') {
                     var memberInfo = JSON.parse(infoString);
-                    var baseInfo = {"姓名": '<c:out value="${member.realName}"/>', "身份证号码": '<c:out value="${member.idCard}"/>', "用户名": '<c:out value="${member.userName}"/>'};
+                    var baseInfo = {"姓名": '<c:out value="${member.realName}"/>', "身份证号码": '<c:out value="${member.idCard}"/>',
+                        "用户名": '<c:out value="${member.userName}"/>',"电话号码": '<c:out value="${member.phone}"/>'};
                     $.each(memberInfo["基本信息"], function (key, val) {
                         baseInfo[key] = val;
                     });
 
-                    //console.log("hhh");
                     var html1 = "";
                     var html2 = "";
                     html1 += showDivObject("基本信息", baseInfo);
