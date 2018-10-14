@@ -61,10 +61,10 @@
                         {"data": "usertype", "sClass": "center"},
                         {"data": "deposit", "sClass": "center"},
                         {"data": "withdraw", "sClass": "center"},
+                        {"data": "investment", "sClass": "center", "defaultContent": ""},
 
-                        {"data": "repaymentCount", "sClass": "center"},
+                        {"data": "repayment", "sClass": "center"},
                         {"data": "returnCount", "sClass": "center", "defaultContent": ""},
-                        {"data": "investmentCount", "sClass": "center", "defaultContent": ""},
                         {"data": "fundsCount", "sClass": "center", "defaultContent": ""},
                         {"data": "targetCount", "sClass": "center"}
                     ],
@@ -94,21 +94,21 @@
                             }
                         },
                         {
-                            "orderable": false, "targets": 8, title: '还款记录',
+                            "orderable": false, "targets": 8, title: '投资金额',
+                            render: function (data, type, row, meta) {
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberInvestment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                            }
+                        },
+                        {
+                            "orderable": false, "targets": 9, title: '还款金额',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberRepayment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 9, title: '回款记录',
+                            "orderable": false, "targets": 10, title: '回款记录',
                             render: function (data, type, row, meta) {
                                 return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberReturn.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
-                            }
-                        },
-                        {
-                            "orderable": false, "targets": 10, title: '投资记录',
-                            render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberInvestment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
 
@@ -156,6 +156,8 @@
                         json.data[i].usertype = memberInfo['基本信息']['类型'];
                         json.data[i].deposit = memberInfo['资金']['总充值'];
                         json.data[i].withdraw = memberInfo['资金']['总提现'];
+                        json.data[i].investment = memberInfo['资金']['总投资金额'];
+                        json.data[i].repayment = memberInfo['资金']['应还本息'];
                     }
             });
             myTable.on('draw', function () {
