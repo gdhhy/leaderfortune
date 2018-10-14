@@ -82,14 +82,14 @@
 
                     'columnDefs': [
                         {"orderable": false, 'targets': 0, width: 20},
-                        {"orderable": false, "targets": 1, title: '要求还款时间', width: 140},
+                        {"orderable": false, "targets": 1, title: '要求还款时间', width: 160},
                         {"orderable": false, "targets": 2, title: '借款订单号'},
                         {"orderable": false, "targets": 3, title: '借款项目名称'},
                         {"orderable": false, "targets": 4, title: '资金总额'},
                         {"orderable": false, "targets": 5, title: '应收本金'},
                         {"orderable": false, "targets": 6, title: '应收利息'},
                         {"orderable": false, "targets": 7, title: '收款期数/总期数'},
-                        {"orderable": false, "targets": 8, title: '借款用户还款时间', width: 140},
+                        {"orderable": false, "targets": 8, title: '借款用户还款时间', width: 130},
                         {"orderable": false, "targets": 9, title: '提前还款时间'},
                         {"orderable": false, "targets": 10, title: '交易状况'},
                         {"orderable": false, "targets": 11, title: '类型'},

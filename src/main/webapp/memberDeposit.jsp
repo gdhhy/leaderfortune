@@ -76,7 +76,7 @@
 
                     'columnDefs': [
                         {"orderable": false, 'targets': 0, width: 20},
-                        {"orderable": false, 'targets': 1, title: '时间', width: 140},
+                        {"orderable": false, 'targets': 1, title: '时间', width: 160},
                         {"orderable": false, "targets": 2, title: '订单号'},
                         {"orderable": false, "targets": 3, title: '充值银行卡号'},
                         {"orderable": false, "targets": 4, title: '充值金额'},

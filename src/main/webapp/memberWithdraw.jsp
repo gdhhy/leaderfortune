@@ -96,7 +96,7 @@
                         var total = 0.0;
                         $.each(data, function (index, value) {
                             if (value["状态"] === '取现成功')
-                                total += value["充值金额"];
+                                total += value["提现金额"];
                         });
                         // Update footer
                         $(tfoot).find('th').eq(0).html('取现成功合计： ' + accounting.formatMoney(total, '￥'));

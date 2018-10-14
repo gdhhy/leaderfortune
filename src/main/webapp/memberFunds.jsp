@@ -81,7 +81,7 @@
                     'columnDefs': [
 
                         {"orderable": false, 'targets': 0, width: 20},
-                        {"orderable": false, 'targets': 1, title: '时间', width: 140},
+                        {"orderable": false, 'targets': 1, title: '时间', width: 160},
                         {"orderable": false, "targets": 2, title: '资金变动金额'},
                         {"orderable": false, "targets": 3, title: '资金总额'},
                         {"orderable": false, "targets": 4, title: '不可提现金额'},
