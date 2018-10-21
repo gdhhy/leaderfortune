@@ -145,9 +145,8 @@
                     $('#aaa').html(html1);
                     $('#bbb').html(html2);
 
-                    //console.log($(".profile-info-name:contains('姓名')").next().html());
-                    $(".profile-info-name:contains('姓名')").next().html("<div class='bigger-150' '>" + $(".profile-info-name:contains('姓名')").next().html() + "</div>");
-                    $(".profile-info-name:contains('身份证号码')").next().html("<div class='bigger-130' '>" + $(".profile-info-name:contains('身份证号码')").next().html() + "</div>");
+                    $(".profile-info-name:contains('姓名')").next().addClass("bigger-150");
+                    $(".profile-info-name:contains('身份证号码')").next().addClass("bigger-130");
                 }
 
             }

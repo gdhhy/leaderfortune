@@ -82,7 +82,9 @@
                     ],
 
                     'columnDefs': [
-                        {"orderable": false, 'targets': 0, width: 20},
+                        {"orderable": false, 'targets': 0, width: 20, render: function (data, type, row, meta) {
+                                return meta.row + 1 + meta.settings._iDisplayStart;
+                            }},
                         {"orderable": false, "targets": 1, title: '要求还款时间', width: 160},
                         {"orderable": false, "targets": 2, title: '借款订单号'},
                         {"orderable": false, "targets": 3, title: '借款项目名称'},
@@ -121,11 +123,6 @@
                     scrollY: '60vh',
                     select: {style: 'single'}
                 });
-            myTable.on('order.dt search.dt', function () {
-                myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                    cell.innerHTML = i + 1;
-                });
-            });
 
             myTable.on('xhr', function (e, settings, json, xhr) {
                 if (json.recordsTotal > 0)

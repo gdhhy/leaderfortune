@@ -49,10 +49,10 @@
             function showMemberInfo(memberNo) {
                 $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
                     if (result.data.length > 0) {
-                        $('#realName').text(result.data[0].realName);
-                        $('#idCard').text(result.data[0].idCard);
+                        var userInfo = "姓名：{0}，身份证号：{1}，银行卡号：{2}";
+
                         var memberInfo = JSON.parse(result.data[0].memberInfo);
-                        $('#bankCardNo').text(memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号);
+                        $('#userInfo').text(userInfo.format(result.data[0].realName, result.data[0].idCard, memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号));
                         $(document).attr("title", result.data[0].realName + ' - ' + $(document).attr("title"));//修改title值
                     }
                 });
@@ -67,6 +67,7 @@
                     bAutoWidth: false,
                     "columns": [
                         {"data": "user_id", "sClass": "center"},
+                        {"data": "真实姓名", "sClass": "center" },
                         {"data": "时间", "sClass": "center", width: "160px"},
                         {"data": "投资金额", "sClass": "center"},
                         {"data": "总加息利率", "sClass": "center"},
@@ -81,23 +82,26 @@
                     ],
 
                     'columnDefs': [
-                        {"orderable": false, 'targets': 0, width: 20},
-                        {"orderable": false, 'targets': 1, title: '时间', width: 140},
-                        {"orderable": false, "targets": 2, title: '投资金额'},
-                        {"orderable": false, "targets": 3, title: '总加息利率'},
-                        {"orderable": false, "targets": 4, title: '借款项目名称'},
-                        {"orderable": false, "targets": 5, title: '借款订单号'},
+                        {"orderable": false, 'targets': 0, width: 20, render: function (data, type, row, meta) {
+                                return meta.row + 1 + meta.settings._iDisplayStart;
+                            }},
+                        {"orderable": false, 'targets': 1, title: '真实姓名'},
+                        {"orderable": false, 'targets': 2, title: '时间', width: 140},
+                        {"orderable": false, "targets": 3, title: '投资金额'},
+                        {"orderable": false, "targets": 4, title: '总加息利率'},
+                        {"orderable": false, "targets": 5, title: '借款项目名称'},
+                        {"orderable": false, "targets": 6, title: '借款订单号'},
                         {
-                            "orderable": false, "targets": 6, title: '借款用户',
+                            "orderable": false, "targets": 7, title: '借款用户',
                             render: function (data, type, row, meta) {
                                 return '<a href="#"  data-Url="memberInfo.jspx?userName={0}">{1}</a>'.format(data, data);
                             }
                         },
-                        {"orderable": false, "targets": 7, title: '是否自动投标'},
-                        {"orderable": false, "targets": 8, title: '债权申请转让'},
-                        {"orderable": false, "targets": 9, title: '放款状态'},
-                        {"orderable": false, "targets": 10, title: '投资状态'},
-                        {"orderable": false, "targets": 11, title: '交易号'}
+                        {"orderable": false, "targets": 8, title: '是否自动投标'},
+                        {"orderable": false, "targets": 9, title: '债权申请转让'},
+                        {"orderable": false, "targets": 10, title: '放款状态'},
+                        {"orderable": false, "targets": 11, title: '投资状态'},
+                        {"orderable": false, "targets": 12, title: '交易号'}
 
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
@@ -122,14 +126,9 @@
                     select: {style: 'single'}
                 });
 
-            myTable.on('order.dt search.dt', function () {
-                myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
-                    cell.innerHTML = i + 1;
-                });
-            });
             myTable.on('xhr', function (e, settings, json, xhr) {
                 if (json.recordsTotal > 0)
-                    $('#wechatCard').text(json.data[0].微商银行账号);
+                    $('#wechatCard').text("，微商银行账号：" + json.data[0].微商银行账号);
             });
             myTable.on('draw', function () {
                 $('#dynamic-table tr').find('a:eq(0)').click(function () {
@@ -168,6 +167,24 @@
                 ]
             }); // todo why only copy csv print
             myTable.buttons().container().appendTo($('.tableTools-container'));
+            $('.btn-success').click(function () {
+                search();
+            });
+            function search() {
+                var searchParam = "";
+                $('.form-search :text').each(function () {
+                    if ($(this).val())
+                        searchParam += "&" + $(this).attr("name") + "=" + $(this).val().trim();
+                });
+                /* if (searchParam !== "")
+                     url = "/memberTarget.jspx" + searchParam;*/
+               var  url = "/memberInvestment.jspx" + searchParam.replace(/&/, "?");
+                myTable.ajax.url(encodeURI(url)).load();
+
+                $('#userInfo').text('');
+                $('#wechatCard').text('');
+                $(document).attr('title', "搜索结果 - 投资记录 - 礼德财富");
+            }
         })
     </script>
 </head>
@@ -181,7 +198,27 @@
     </script>
     <div class="main-content">
         <div class="main-content-inner">
+            <div class="breadcrumbs" id="breadcrumbs">
+                <ul class="breadcrumb">
+                    <form class="form-search form-inline">
+                        借款人：<input type="text" name="borrower" placeholder="借款人……" class="nav-search-input" autocomplete="off"/>
 
+                        <button class="btn btn-sm btn-reset" type="reset">
+                            <i class="ace-icon fa fa-undo bigger-110"></i>
+                            清空
+                        </button>
+                    </form>
+                </ul>
+                <!-- #section:basics/content.searchbox -->
+                <div class="nav-search" id="nav-search">
+                    <button type="button" class="btn btn-sm btn-success">
+                        搜索
+                        <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110"></i>
+                    </button>
+                </div><!-- /.nav-search -->
+
+                <!-- /section:basics/content.searchbox -->
+            </div>
             <div class="page-content">
 
                 <div class="row">
@@ -191,9 +228,7 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span>，
-                                    绑定的银行卡号：<span id="bankCardNo"></span>，微商银行账号 <span id="wechatCard"></span>
-                                    ，投资记录
+                                    <span id="userInfo"></span> <span id="wechatCard"></span>&nbsp;&nbsp;投资记录
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->

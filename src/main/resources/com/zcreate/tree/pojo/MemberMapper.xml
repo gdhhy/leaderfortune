@@ -35,6 +35,11 @@
             <if test="@com.zcreate.Ognl@isNotEmpty(param.memberNo)">AND member_no = #{param.memberNo:VARCHAR}</if>
             <if test="@com.zcreate.Ognl@isNotEmpty(param.userName)">AND user_name = #{param.userName:VARCHAR}</if>
             <if test="@com.zcreate.Ognl@isNotEmpty(param.realName)">AND real_name = #{param.realName:VARCHAR}</if>
+            <!--<if test="@com.zcreate.Ognl@isNotEmpty(param.borrower)">AND member_no in (SELECT member_id FROM member A join (select distinct user_id from touzi where 借款用户 in
+                (select user_name from member where real_name=#{param.borrower:VARCHAR})) B on A.member_no=B.user_id)
+            </if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.investor)">AND member_no in ( select user_id from biaodi where 投资人 like '%${param.investor}%')</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.cooperative)">AND member_no in ( select user_id from biaodi where 合作机构 like '%${param.cooperative}%')</if>-->
             <if test="@com.zcreate.Ognl@isNotEmpty(param.phone)">AND phone = #{param.phone:VARCHAR}</if>
             <if test="@com.zcreate.Ognl@isNotEmpty(param.idCard)">AND id_card = #{param.idCard:VARCHAR}</if>
         </where>
@@ -89,11 +94,17 @@
     </select>
     <select id="selectTarget" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
         select A.*,ifnull(B.real_name,'')债权人姓名 from (SELECT 订单号,user_id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,微商银行账号,绑定的银行卡号,ifnull(银行名称,'')银行名称,
-        ifnull(支行名称,'')支行名称,ifnull(`(旧)银行卡号`,'') `(旧)银行卡号`, ifnull(归属银行,'')归属银行, ifnull(开户支行,'')开户支行,`(旧)汇付天下用户`,
-        `(旧)汇付天下账号`,项目名称,借款金额,借款利息,借款期数,总成本, ifnull(委托人姓名,'')委托人姓名,还款方式,借款用途, ifnull(合作机构,'')合作机构,
+        ifnull(支行名称,'')支行名称,ifnull(`(旧)银行卡号`,'') `(旧)银行卡号`, ifnull(归属银行,'')归属银行, ifnull(开户支行,'')开户支行,ifnull(`(旧)汇付天下用户`,'') '(旧)汇付天下用户',
+        ifnull(`(旧)汇付天下账号`,'')'(旧)汇付天下账号',项目名称,借款金额,借款利息,借款期数,总成本, ifnull(委托人姓名,'')委托人姓名,ifnull(还款方式,'')还款方式,借款用途, ifnull(合作机构,'')合作机构,
         ifnull(投资人,'')投资人, 签单号, ifnull(上线时间,'')上线时间, ifnull(签单时间,'')签单时间, ifnull(满标时间,'')满标时间, ifnull(放款时间,'')放款时间,
         ifnull(到期时间,'')到期时间,ifnull(借款类型,'')借款类型, ifnull(债权人,'')债权人,状态
-        FROM biaodi A where user_id = #{param.user_id:INTEGER}) A
+        FROM biaodi A
+        <where>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.user_id)">AND user_id = #{param.user_id:INTEGER}</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.investor)">AND 投资人 like '%${param.investor}%'</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.cooperative)">AND 合作机构 like '%${param.cooperative}%'</if>
+        </where>
+        ) A
         left join member B on A.债权人=B.member_no
         order by 订单号
         <choose>
@@ -188,9 +199,15 @@
         where user_id = #{param.user_id:INTEGER}
     </select>
     <select id="selectInvestment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,用户名,电话号码,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
+        SELECT user_id,用户名,真实姓名,电话号码,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
         ifnull(放款状态,'')放款状态,投资状态,ifnull(交易号,'')交易号,时间 FROM touzi
-        where user_id = #{param.user_id:INTEGER}
+        <where>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.user_id)">AND user_id = #{param.user_id:INTEGER}</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.borrower)">AND
+                (借款用户 in (select user_name from member where real_name=#{param.borrower:VARCHAR}) OR
+                借款用户 LIKE '%${param.borrower}%')
+            </if>
+        </where>
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}

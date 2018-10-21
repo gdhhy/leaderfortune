@@ -34,6 +34,9 @@ public class MemberController {
                              @RequestParam(value = "idCard", required = false) String idCard,
                              @RequestParam(value = "userName", required = false) String userName,
                              @RequestParam(value = "realName", required = false) String realName,
+                             @RequestParam(value = "borrower", required = false) String borrower,
+                             @RequestParam(value = "investor", required = false) String investor,
+                             @RequestParam(value = "cooperative", required = false) String cooperative,
                              @RequestParam(value = "threeThirty", required = false) Boolean threeThirty,
                              @RequestParam(value = "draw", required = false) Integer draw,
                              @RequestParam(value = "start", required = false) Integer start,
@@ -45,6 +48,9 @@ public class MemberController {
         param.put("idCard", idCard);
         param.put("userName", userName);
         param.put("realName", realName);
+        param.put("borrower", borrower);
+        param.put("investor", investor);
+        param.put("cooperative", cooperative);
         param.put("threeThirty", threeThirty);
         param.put("start", start);
         param.put("length", length);
@@ -157,11 +163,13 @@ public class MemberController {
     @ResponseBody
     @RequestMapping(value = "/memberInvestment", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String memberInvestment(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                                   @RequestParam(value = "borrower", required = false) String borrower,
                                    @RequestParam(value = "draw", required = false) Integer draw,
                                    @RequestParam(value = "start", required = false) Integer start,
                                    @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
         Map<String, Object> param = new HashMap<>();
         param.put("user_id", memberNo);
+        param.put("borrower", borrower);
         param.put("start", start);
         param.put("length", length);
 
@@ -217,11 +225,15 @@ public class MemberController {
     @ResponseBody
     @RequestMapping(value = "/memberTarget", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String memberTarget(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                               @RequestParam(value = "investor", required = false) String investor,
+                               @RequestParam(value = "cooperative", required = false) String cooperative,
                                @RequestParam(value = "draw", required = false) Integer draw,
                                @RequestParam(value = "start", required = false) Integer start,
                                @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
         Map<String, Object> param = new HashMap<>();
         param.put("user_id", memberNo);
+        param.put("investor", investor);
+        param.put("cooperative", cooperative);
         param.put("start", start);
         param.put("length", length);
 

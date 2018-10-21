@@ -42,7 +42,7 @@
 
     <%--<script src="js/jquery.form.js"></script>--%>
     <script src="js/func.js"></script>
-
+    <script src="js/accounting.min.js"></script>
     <link rel="stylesheet" href="css/jqueryui/jquery-ui.min.css"/>
     <link rel="stylesheet" href="components/jquery-ui.custom/jquery-ui.custom.css"/>
 
@@ -168,7 +168,7 @@
                 });
 
                 $('#dynamic-table tr').find('.hasDetail').click(function () {
-                    window.open(encodeURI(encodeURI($(this).attr("data-Url"))), "_blank");
+                    window.open($(this).attr("data-Url"), "_blank");
                 });
             });
             $('.btn-success').click(function () {
@@ -229,7 +229,7 @@
                 var searchParam = "?threeThirty=" + $('#three_thirty').is(':checked');
                 $('.form-search :text').each(function () {
                     if ($(this).val())
-                        searchParam += "&" + $(this).attr("name") + "=" + $(this).val();
+                        searchParam += "&" + $(this).attr("name") + "=" + $(this).val().trim();
                 });
                 if (searchParam !== "")
                     url = "/listMember.jspx" + searchParam;
@@ -254,20 +254,23 @@
                 <ul class="breadcrumb">
                     <form class="form-search form-inline">
                         <label>用户名：</label>
-                        <input type="text" name="userName" placeholder="用户名……" class="nav-search-input"
-                               autocomplete="off"/>
+                        <input type="text" name="userName" placeholder="用户名……" class="nav-search-input" autocomplete="off"/>
                         真实姓名：
-                        <input type="text" name="realName" placeholder="真实姓名……" class="nav-search-input"
-                               autocomplete="off"/>
+                        <input type="text" name="realName" placeholder="真实姓名……" class="nav-search-input" autocomplete="off"/>
                         证件号：
                         <input type="text" name="idCard" placeholder="证件号……" class="nav-search-input" autocomplete="off"/>
                         手机号：
-                        <input type="text" name="phone" placeholder="手机号……" class="nav-search-input"
-                               autocomplete="off"/>
+                        <input type="text" name="phone" placeholder="手机号……" class="nav-search-input" autocomplete="off"/>
+                        <%--借款人：
+                        <input type="text" name="borrower" placeholder="借款人……" class="nav-search-input" autocomplete="off"/>
+                        投资人：
+                        <input type="text" name="investor" placeholder="投资人……" class="nav-search-input" autocomplete="off"/>
+                        合作机构：
+                        <input type="text" name="cooperative" placeholder="合作机构……" class="nav-search-input" autocomplete="off"/>--%>
 
                         <button class="btn btn-sm btn-reset" type="reset">
                             <i class="ace-icon fa fa-undo bigger-110"></i>
-                            复位
+                            清空
                         </button>
                     </form>
                 </ul>
