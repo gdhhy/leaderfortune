@@ -137,13 +137,13 @@
                     });
 
                     var html1 = "";
-                    var html2 = "";
+                    //var html2 = "";
                     html1 += showDivObject("基本信息", baseInfo);
-                    html2 += showDivObject("资金", memberInfo["资金"]);
+                  /*  html2 += showDivObject("资金", memberInfo["资金"]);
                     html2 += showDivObject("旧资料", memberInfo["旧资料"]);
-                    html1 += showDivObject("银行账户", memberInfo["银行账户"]);
+                    html1 += showDivObject("银行账户", memberInfo["银行账户"]);*/
                     $('#aaa').html(html1);
-                    $('#bbb').html(html2);
+                    //$('#bbb').html(html2);
 
                     $(".profile-info-name:contains('姓名')").next().addClass("bigger-150");
                     $(".profile-info-name:contains('身份证号码')").next().addClass("bigger-130");

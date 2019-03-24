@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>标的信息 - 礼德财富</title>
+    <title>订单信息 - ${short_title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -56,28 +56,19 @@
     <script type="text/javascript">
         jQuery(function ($) {
             function showDetail(d) {
-                var investors = d["投资人"].split(",");
-                var html = "";
-                if (investors.length > 0) {
-                    $.each(investors, function (i, item) {
-                        html += "<a href='memberInfo.jspx?realName={0}' target='_blank'>{1}</a>&nbsp;&nbsp;".format(item, item);
-                    });
-                }
-                return $('#rowDetail').html().format(d["银行名称"], d["支行名称"], d["归属银行"], d["开户支行"], d["(旧)银行卡号"], d["(旧)汇付天下用户"], d["(旧)汇付天下账号"],
-                    d["委托人姓名"], html, d["借款类型"], d["签单号"], d["上线时间"], d["签单时间"], d["到期时间"]);
+                return $('#rowDetail').html().format(d["订单状态"], d["子订单状态"], d["收货人电话"], d["收货人地址"]);
             }
 
             var memberNo = $.getUrlParam("memberNo");
 
-            var url = "/memberTarget.jspx?memberNo=" + memberNo;
+            var url = "/order.jspx?memberNo=" + memberNo;
 
             function showMemberInfo(memberNo) {
                 $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
                     if (result.data.length > 0) {
-                        var userInfo = "姓名：{0}，身份证号：{1}，银行卡号：{2}";
+                        var userInfo = "姓名：{0}，身份证号：{1}";
 
-                        var memberInfo = JSON.parse(result.data[0].memberInfo);
-                        $('#userInfo').text(userInfo.format(result.data[0].realName, result.data[0].idCard, memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号));
+                        $('#userInfo').text(userInfo.format(result.data[0].realName, result.data[0].idCard));
                         $(document).attr("title", result.data[0].realName + ' - ' + $(document).attr("title"));//修改title值
                     }
                 });
@@ -86,31 +77,25 @@
             showMemberInfo(memberNo);
             var myTable = $('#dynamic-table')
             //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
-            /*
-            订单号, 项目名称,借款金额,借款利息,借款期数,总成本,还款方式,借款用途,上线时间,满标时间,放款时间, 债权人,状态
 
-        银行名称,支行名称,归属银行,开户支行, (旧)银行卡号, (旧)汇付天下用户,(旧)汇付天下账号
-        合作机构,委托人姓名,投资人,借款类型,签单号,签单时间,到期时间,
-        */
                 .DataTable({
                     bAutoWidth: false,
                     "columns": [
-                        {"data": "user_id", "sClass": "center"},
-                        {"class": "details-control", "orderable": false, "data": null, "defaultContent": ""},
-                        {"data": "真实姓名", "sClass": "center"},
                         {"data": "订单号", "sClass": "center"},
-                        {"data": "项目名称", "sClass": "center"},
-                        {"data": "借款金额", "sClass": "center"},
-                        {"data": "借款利息", "sClass": "center"},
-                        {"data": "借款期数", "sClass": "center"},
-                        {"data": "总成本", "sClass": "center"},
-                        {"data": "还款方式", "sClass": "center"},
-                        {"data": "借款用途", "sClass": "center"},
-                        {"data": "合作机构", "sClass": "center"},
-                        {"data": "满标时间", "sClass": "center"},
-                        {"data": "放款时间", "sClass": "center"},
-                        {"data": "债权人", "sClass": "center"},
-                        {"data": "状态", "sClass": "center"}
+                        {"class": "details-control", "orderable": false, "data": null, "defaultContent": ""},
+                        {"data": "订单号", "sClass": "center"},
+
+                        {"data": "下单时间", "sClass": "center"},
+                        {"data": "子订单编号", "sClass": "center"},
+                        {"data": "公司名称", "sClass": "center"},
+                        {"data": "商店名称", "sClass": "center"},
+                        {"data": "商品总价", "sClass": "center"},
+                        {"data": "订单最终金额", "sClass": "center"},
+                        {"data": "商品名称", "sClass": "center"},
+                        {"data": "商品单价", "sClass": "center"},
+                        {"data": "销售数量", "sClass": "center"},
+                        {"data": "商品实际金额", "sClass": "center"},
+                        {"data": "收货人姓名", "sClass": "center"}
                     ],
 
                     'columnDefs': [
@@ -119,25 +104,19 @@
                                 return meta.row + 1 + meta.settings._iDisplayStart;
                             }
                         },
-                        {"orderable": true, 'targets': 2, title: '真实姓名'},
-                        {"orderable": true, 'targets': 3, title: '订单号'},
-                        {"orderable": false, 'targets': 4, title: '项目名称'},
-                        {"orderable": false, "targets": 5, title: '借款金额'},
-                        {"orderable": false, "targets": 6, title: '借款利息'},
-                        {"orderable": false, "targets": 7, title: '借款期数'},
-                        {"orderable": false, "targets": 8, title: '总成本'},
-                        {"orderable": false, "targets": 9, title: '还款方式'},
-                        {"orderable": false, "targets": 10, title: '借款用途'},
-                        {"orderable": true, "targets": 11, title: '合作机构'},
-                        {"orderable": true, "targets": 12, title: '满标时间'},
-                        {"orderable": true, "targets": 13, title: '放款时间'},
-                        {
-                            "orderable": false, "targets": 14, title: '债权人',
-                            render: function (data, type, row, meta) {
-                                return '<a href="#"  data-memberNo="{0}">{1}</a>'.format(row["债权人"], row["债权人姓名"] === '' ? '（空）' : row["债权人姓名"]);
-                            }
-                        },
-                        {"orderable": false, "targets": 15, title: '状态'}
+                        {"orderable": true, 'targets': 2, title: '订单号'},
+                        {"orderable": true, 'targets': 3, title: '下单时间',width:120},
+                        {"orderable": false, 'targets': 4, title: '子订单号'},
+                        {"orderable": false, "targets": 5, title: '商家名称'},
+                        {"orderable": false, "targets": 6, title: '商店名称'},
+                        {"orderable": false, "targets": 7, title: '商品总价'},
+                        {"orderable": false, "targets": 8, title: '订单最终金额'},
+                        {"orderable": false, "targets": 9, title: '商品名称'},
+                        {"orderable": false, "targets": 10, title: '商品单价'},
+                        {"orderable": true, "targets": 11, title: '销售数量'},
+                        {"orderable": true, "targets": 12, title: '小计'},
+                        {"orderable": true, "targets": 13, title: '收货人姓名'}
+
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
                     "aaSorting": [],//"aaSorting": [[ 4, "desc" ]],//设置第5个元素为默认排序
@@ -146,6 +125,7 @@
                     },
                     "ajax": url,
                     scrollY: '60vh',
+                    "paging": false,
                     "processing": true
                     /*,
                     select: {style: 'single'}*/
@@ -179,15 +159,9 @@
                 $.each(detailRows, function (i, id) {
                     $('#' + id + ' td.details-control').trigger('click');
                 });
-                $('#dynamic-table tr').find('a:eq(0)').click(function () {
-                    url = "/memberInfo.jspx?memberNo={0}".format($(this).attr("data-memberNo"));
-                    window.open(url, "_blank");
-                });
+
             });
-            myTable.on('xhr', function (e, settings, json, xhr) {
-                if (json.recordsTotal > 0)
-                    $('#wechatCard').text("，微商银行账号：" + json.data[0].微商银行账号);
-            });
+
 
             //$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
             new $.fn.dataTable.Buttons(myTable, {
@@ -222,26 +196,6 @@
             }); // todo why only copy csv print
             myTable.buttons().container().appendTo($('.tableTools-container'));
 
-            $('.form-search :text:eq(0)').each(function () {
-                $(this).width(80);
-            });
-            $('.btn-success').click(function () {
-                search();
-            });
-
-            function search() {
-                var searchParam = "";
-                $('.form-search :text').each(function () {
-                    if ($(this).val())
-                        searchParam += "&" + $(this).attr("name") + "=" + $(this).val().trim();
-                });
-                var url = "/memberTarget.jspx" + searchParam.replace(/&/, "?");
-                myTable.ajax.url(encodeURI(url)).load();
-
-                $('#userInfo').text('');
-                $('#wechatCard').text('');
-                $(document).attr('title', "搜索结果 - 标的信息 - 礼德财富");
-            }
         })
     </script>
 </head>
@@ -255,30 +209,6 @@
     </script>
     <div class="main-content">
         <div class="main-content-inner">
-            <div class="breadcrumbs" id="breadcrumbs">
-                <ul class="breadcrumb">
-                    <form class="form-search form-inline">
-                        投资人：
-                        <input type="text" name="investor" placeholder="投资人……" class="nav-search-input" autocomplete="off"/>
-                        合作机构：
-                        <input type="text" name="cooperative" placeholder="合作机构……" class="nav-search-input" autocomplete="off"/>
-
-                        <button class="btn btn-sm btn-reset" type="reset">
-                            <i class="ace-icon fa fa-undo bigger-110"></i>
-                            清空
-                        </button>
-                    </form>
-                </ul>
-                <!-- #section:basics/content.searchbox -->
-                <div class="nav-search" id="nav-search">
-                    <button type="button" class="btn btn-sm btn-success">
-                        搜索
-                        <i class="ace-icon fa fa-arrow-right icon-on-right bigger-110"></i>
-                    </button>
-                </div><!-- /.nav-search -->
-
-                <!-- /section:basics/content.searchbox -->
-            </div>
             <div class="page-content">
 
                 <div class="row">
@@ -288,7 +218,7 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    <span id="userInfo"></span> <span id="wechatCard"></span>&nbsp;&nbsp;标的信息
+                                    <span id="userInfo"></span>  &nbsp;&nbsp;订单信息
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->
@@ -328,7 +258,7 @@
 
                 <div class="profile-user-info profile-user-info-striped">
                     <div class="profile-info-row">
-                        <div class="profile-info-name" style="width: 120px;"> 银行名称</div>
+                        <div class="profile-info-name" style="width: 120px;">订单状态</div>
 
                         <div class="profile-info-value">
                             <span>{0}</span>
@@ -336,58 +266,10 @@
                     </div>
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> 支行名称</div>
+                        <div class="profile-info-name">子订单状态</div>
 
                         <div class="profile-info-value">
                             <span>{1}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> 归属银行</div>
-
-                        <div class="profile-info-value">
-                            <span>{2}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> 开户支行</div>
-
-                        <div class="profile-info-value">
-                            <span>{3}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> (旧)银行卡号</div>
-
-                        <div class="profile-info-value">
-                            <span>{4}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> (旧)汇付天下用户</div>
-
-                        <div class="profile-info-value">
-                            <span>{5}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> (旧)汇付天下账号</div>
-
-                        <div class="profile-info-value">
-                            <span>{6}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> 委托人姓名</div>
-
-                        <div class="profile-info-value">
-                            <span>{7}</span>
                         </div>
                     </div>
                 </div>
@@ -399,51 +281,21 @@
                 <div class="profile-user-info profile-user-info-striped">
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> 投资人</div>
+                        <div class="profile-info-name">收货人电话</div>
 
                         <div class="profile-info-value">
-                            <span>{8}</span>
+                            <span>{2}</span>
                         </div>
                     </div>
 
                     <div class="profile-info-row">
-                        <div class="profile-info-name"> 借款类型</div>
+                        <div class="profile-info-name">收货地址</div>
 
                         <div class="profile-info-value">
-                            <span>{9}</span>
+                            <span>{3}</span>
                         </div>
                     </div>
 
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> 签单号</div>
-
-                        <div class="profile-info-value">
-                            <span>{10}</span>
-                        </div>
-                    </div>
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> 上线时间</div>
-
-                        <div class="profile-info-value">
-                            <span>{11}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> 签单时间</div>
-
-                        <div class="profile-info-value">
-                            <span>{12}</span>
-                        </div>
-                    </div>
-
-                    <div class="profile-info-row">
-                        <div class="profile-info-name"> 到期时间</div>
-
-                        <div class="profile-info-value">
-                            <span>{13}</span>
-                        </div>
-                    </div>
                 </div>
             </div>
 

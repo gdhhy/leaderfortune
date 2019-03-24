@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>提现记录 - 礼德财富</title>
+    <title>创业金提现明细 - ${short_title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -44,67 +44,75 @@
         jQuery(function ($) {
             var memberNo = $.getUrlParam("memberNo");
 
-            var url = "/memberWithdraw.jspx?memberNo=" + memberNo;
+            var url = "/withdraw.jspx?memberNo=" + memberNo;
 
             function showMemberInfo(memberNo) {
                 $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
                     if (result.data.length > 0) {
-                        $('#realName').text(result.data[0].realName);
-                        $('#idCard').text(result.data[0].idCard);
-                        var memberInfo = JSON.parse(result.data[0].memberInfo);
-                        $('#bankCardNo').text(memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号);
+                        var userInfo = "姓名：{0}，身份证号：{1}";
+
+                        $('#userInfo').text(userInfo.format(result.data[0].realName, result.data[0].idCard));
                         $(document).attr("title", result.data[0].realName + ' - ' + $(document).attr("title"));//修改title值
                     }
                 });
             }
 
             showMemberInfo(memberNo);
-            //充值金额,充值手续费,取现类型,取现银行卡号,订单号,状态,时间
+            //,微商银行账号,
             var myTable = $('#dynamic-table')
             //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
                 .DataTable({
                     bAutoWidth: false,
                     "columns": [
-                        {"data": "user_id", "sClass": "center"},
-                        {"data": "时间", "sClass": "center"},
-                        {"data": "订单号", "sClass": "center"},
-                        {"data": "取现银行卡号", "sClass": "center"},
-                        {"data": "提现金额", "sClass": "center"},
-                        {"data": "提现手续费", "sClass": "center"},
-                        {"data": "取现类型", "sClass": "center"},
-                        {"data": "状态", "sClass": "center"}
+                        {"data": "会员id", "sClass": "center"},
+                        {"data": "用户名", "sClass": "center"},
+                        {"data": "手机号码", "sClass": "center"},
+                        {"data": "真实姓名", "sClass": "center"},
+                        {"data": "证件号码", "sClass": "center"},
+                        {"data": "银行卡号", "sClass": "center"},
+                        {"data": "标题", "sClass": "center"},
+                        {"data": "业务类型", "sClass": "center"},
+                        {"data": "金额", "sClass": "center"},
+                        {"data": "手续费", "sClass": "center"},
+                        {"data": "备注", "sClass": "center"},
+                        {"data": "提现时间", "sClass": "center"}
                     ],
 
                     'columnDefs': [
-                        {
-                            "orderable": false, 'targets': 0, width: 20, render: function (data, type, row, meta) {
+
+                        {"orderable": false, 'targets': 0, width: 20, render: function (data, type, row, meta) {
                                 return meta.row + 1 + meta.settings._iDisplayStart;
-                            }
-                        },
-                        {"orderable": false, 'targets': 1, title: '时间', width: 140},
-                        {"orderable": false, "targets": 2, title: '订单号'},
-                        {"orderable": false, "targets": 3, title: '取现银行卡号'},
-                        {"orderable": false, "targets": 4, title: '提现金额'},
-                        {"orderable": false, "targets": 5, title: '提现手续费'},
-                        {"orderable": false, "targets": 6, title: '取现类型'},
-                        {"orderable": false, 'targets': 7, title: '状态'}
+                            }},
+                        {"orderable": false, "targets": 1, title: '用户名'},
+                        {"orderable": false, "targets": 2, title: '手机号码'},
+                        {"orderable": false, "targets": 3, title: '真实姓名'},
+                        {"orderable": false, "targets": 4, title: '证件号码'},
+                        {"orderable": false, "targets": 5, title: '银行卡号'},
+                        {"orderable": false, "targets": 6, title: '标题'},
+                        {"orderable": false, "targets": 7, title: '业务类型'},
+                        {"orderable": false, "targets": 8, title: '金额'},
+                        {"orderable": false, "targets": 9, title: '手续费'},
+                        {"orderable": false, "targets": 10, title: '备注'},
+                        {"orderable": false, "targets": 11, title: '提现时间',width:120}
+
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
                     "aaSorting": [],//"aaSorting": [[ 4, "desc" ]],//设置第5个元素为默认排序
                     language: {
                         url: '/js/datatables/datatables.chinese.json'
                     },
-                    scrollY: '60vh',
                     "ajax": url,
+
+                    scrollY: '60vh',
                     "processing": true,
                     "footerCallback": function (tfoot, data, start, end, display) {
-                        var total = 0.0;
+                        var total = [0];
                         $.each(data, function (index, value) {
-                            if (value["状态"] === '取现成功')
-                                total += value["提现金额"];
+                            total[0] += value["金额"];
                         });
+
                         // Update footer
-                        $(tfoot).find('th').eq(0).html('取现成功合计： ' + accounting.formatMoney(total, '￥'));
+                        $(tfoot).find('th').eq(1).html(accounting.formatNumber(total[0],2));
                     },
                     select: {style: 'single'}
                 });
@@ -171,9 +179,7 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span>，
-                                    绑定的银行卡号：<span id="bankCardNo"></span>，微商银行账号 <span id="wechatCard"></span>
-                                    ，提现记录
+                                    <span id="userInfo"></span>  &nbsp;&nbsp;创业金提现明细
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->
@@ -183,9 +189,9 @@
                                     <table id="dynamic-table" class="table table-striped table-bordered table-hover">
                                         <tfoot>
                                         <tr>
-                                            <th colspan="8" style="text-align:right">
-                                                <div id="footTotal">&nbsp;</div>
-                                            </th>
+                                            <th colspan="8" style="text-align:right">合计</th>
+                                            <th style="text-align:right"></th>
+                                            <th colspan="3" style="text-align:right"></th>
                                         </tr>
                                         </tfoot>
                                     </table>

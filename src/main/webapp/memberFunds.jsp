@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>资金流水 - 礼德财富</title>
+    <title>创业金 - ${short_title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -44,15 +44,14 @@
         jQuery(function ($) {
             var memberNo = $.getUrlParam("memberNo");
 
-            var url = "/memberFunds.jspx?memberNo=" + memberNo;
+            var url = "/funds.jspx?memberNo=" + memberNo;
 
             function showMemberInfo(memberNo) {
                 $.getJSON("/listMember.jspx?memberNo=" + memberNo, function (result) { //https://www.cnblogs.com/liuling/archive/2013/02/07/sdafsd.html
                     if (result.data.length > 0) {
-                        $('#realName').text(result.data[0].realName);
-                        $('#idCard').text(result.data[0].idCard);
-                        var memberInfo = JSON.parse(result.data[0].memberInfo);
-                        $('#bankCardNo').text(memberInfo.银行账户.银行卡号 === '' ? '(空)' : memberInfo.银行账户.银行卡号);
+                        var userInfo = "姓名：{0}，身份证号：{1}";
+
+                        $('#userInfo').text(userInfo.format(result.data[0].realName, result.data[0].idCard));
                         $(document).attr("title", result.data[0].realName + ' - ' + $(document).attr("title"));//修改title值
                     }
                 });
@@ -60,23 +59,19 @@
 
             showMemberInfo(memberNo);
             var myTable = $('#dynamic-table')
-            //.wrap("<div class='dataTables_borderWrap' />")   //if you are applying horizontal scrolling (sScrollX)
-            /*绑定的银行卡号,微商银行账号,资金变动金额,资金总额,不可提现金额,现金,冻结,资金变动说明,借款项目名称,借款订单号,时间,资金变动类型,变动类型*/
                 .DataTable({
                     bAutoWidth: false,
                     "columns": [
-                        {"data": "用户id", "sClass": "center"},
-                        {"data": "时间", "sClass": "center"},
-                        {"data": "资金变动金额", "sClass": "center"},
-                        {"data": "资金总额", "sClass": "center"},
-                        {"data": "不可提现金额", "sClass": "center"},
-                        {"data": "现金", "sClass": "center"},
-                        {"data": "冻结", "sClass": "center"},
-                        {"data": "资金变动说明", "sClass": "center"},
-                        {"data": "借款项目名称", "sClass": "center"},
-                        {"data": "借款订单号", "sClass": "center"},
-                        {"data": "变动类型", "sClass": "center"},
-                        {"data": "资金变动类型", "sClass": "center"}
+                        {"data": "会员id", "sClass": "center"},
+                        {"data": "用户名", "sClass": "center"},
+                        {"data": "手机号码", "sClass": "center"},
+                        {"data": "真实姓名", "sClass": "center"},
+                        {"data": "证件号码", "sClass": "center"},
+                        {"data": "银行卡号", "sClass": "center"},
+                        {"data": "标题", "sClass": "center"},
+                        {"data": "类型", "sClass": "center"},
+                        {"data": "创业金", "sClass": "center"},
+                        {"data": "创建时间", "sClass": "center"}
                     ],
 
                     'columnDefs': [
@@ -84,17 +79,15 @@
                         {"orderable": false, 'targets': 0, width: 20, render: function (data, type, row, meta) {
                                 return meta.row + 1 + meta.settings._iDisplayStart;
                             }},
-                        {"orderable": false, 'targets': 1, title: '时间', width: 160},
-                        {"orderable": false, "targets": 2, title: '资金变动金额'},
-                        {"orderable": false, "targets": 3, title: '资金总额'},
-                        {"orderable": false, "targets": 4, title: '不可提现金额'},
-                        {"orderable": false, "targets": 5, title: '现金'},
-                        {"orderable": false, "targets": 6, title: '冻结'},
-                        {"orderable": false, "targets": 7, title: '资金变动说明'},
-                        {"orderable": false, "targets": 8, title: '借款项目名称'},
-                        {"orderable": false, "targets": 9, title: '借款订单号'},
-                        {"orderable": false, "targets": 10, title: '变动类型'},
-                        {"orderable": false, "targets": 11, title: '资金变动类型'}
+                        {"orderable": false, "targets": 1, title: '用户名'},
+                        {"orderable": false, "targets": 2, title: '手机号码'},
+                        {"orderable": false, "targets": 3, title: '真实姓名'},
+                        {"orderable": false, "targets": 4, title: '证件号码'},
+                        {"orderable": false, "targets": 5, title: '银行卡号'},
+                        {"orderable": false, "targets": 6, title: '标题'},
+                        {"orderable": false, "targets": 7, title: '类型'},
+                        {"orderable": false, "targets": 8, title: '创业金'},
+                        {"orderable": false, "targets": 9, title: '创建时间'}
 
                     ],
                     "aLengthMenu": [[20, 100, 1000, -1], ["20", "100", "1000", "全部"]],//二组数组，第一组数量，第二组说明文字;
@@ -105,6 +98,15 @@
                     scrollY: '60vh',
                     "ajax": url,
                     "processing": true,
+                    "footerCallback": function (tfoot, data, start, end, display) {
+                        var total = [0];
+                        $.each(data, function (index, value) {
+                            total[0] += value["创业金"];
+                        });
+
+                        // Update footer
+                        $(tfoot).find('th').eq(1).html(total[0]);
+                    },
                     select: {style: 'single'}
                 });
             myTable.on('xhr', function (e, settings, json, xhr) {
@@ -166,9 +168,7 @@
 
                             <div class="col-xs-12">
                                 <div class="table-header">
-                                    姓名：<span id="realName"></span>，身份证号：<span id="idCard"></span>，
-                                    绑定的银行卡号：<span id="bankCardNo"></span>，微商银行账号 <span id="wechatCard"></span>
-                                    ，资金流水
+                                    <span id="userInfo"></span>  &nbsp;&nbsp;创业金
                                     <div class="pull-right tableTools-container"></div>
                                 </div>
                                 <!-- div.table-responsive -->
@@ -176,6 +176,13 @@
                                 <!-- div.dataTables_borderWrap -->
                                 <div>
                                     <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="8" style="text-align:right">合计</th>
+                                            <th style="text-align:right"></th>
+                                            <th style="text-align:right"></th>
+                                        </tr>
+                                        </tfoot>
                                     </table>
                                 </div>
                             </div>

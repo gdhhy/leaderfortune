@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @Controller
 
@@ -26,6 +28,8 @@ public class MemberController {
     @Autowired
     private MemberMapper memberMapper;
     private Gson gson = new GsonBuilder().serializeNulls().setDateFormat("yyyy-MM-dd HH:mm").create();
+    @Resource
+    private Properties configs;
 
     @ResponseBody
     @RequestMapping(value = "/listMember", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
@@ -77,6 +81,8 @@ public class MemberController {
     public String member(@RequestParam(value = "searchKey", required = false) String searchKey, ModelMap model) {
         log.debug("url = member");
 
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
         return "/member";
     }
 
@@ -97,17 +103,19 @@ public class MemberController {
        /* else
             model.addAttribute("member", new Member());*/
 
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
         return "/memberInfo";
     }
 
     @ResponseBody
-    @RequestMapping(value = "/memberWithdraw", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String memberWithdraw(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+    @RequestMapping(value = "/withdraw", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String withdraw(@RequestParam(value = "memberNo", required = false) Integer memberNo,
                                  @RequestParam(value = "draw", required = false) Integer draw,
                                  @RequestParam(value = "start", required = false) Integer start,
                                  @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
         Map<String, Object> param = new HashMap<>();
-        param.put("user_id", memberNo);
+        param.put("memberNo", memberNo);
         param.put("start", start);
         param.put("length", length);
 
@@ -121,13 +129,13 @@ public class MemberController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/memberDeposit", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String memberDeposit(@RequestParam(value = "memberNo", required = false) Integer memberNo,
-                                @RequestParam(value = "draw", required = false) Integer draw,
-                                @RequestParam(value = "start", required = false) Integer start,
-                                @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+    @RequestMapping(value = "/deposit", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String deposit(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                          @RequestParam(value = "draw", required = false) Integer draw,
+                          @RequestParam(value = "start", required = false) Integer start,
+                          @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
         Map<String, Object> param = new HashMap<>();
-        param.put("user_id", memberNo);
+        param.put("memberNo", memberNo);
         param.put("start", start);
         param.put("length", length);
 
@@ -141,13 +149,13 @@ public class MemberController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/memberFunds", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String memberFunds(@RequestParam(value = "memberNo", required = false) Integer memberNo,
-                              @RequestParam(value = "draw", required = false) Integer draw,
-                              @RequestParam(value = "start", required = false) Integer start,
-                              @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+    @RequestMapping(value = "/funds", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String funds(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                        @RequestParam(value = "draw", required = false) Integer draw,
+                        @RequestParam(value = "start", required = false) Integer start,
+                        @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
         Map<String, Object> param = new HashMap<>();
-        param.put("user_id", memberNo);
+        param.put("memberNo", memberNo);
         param.put("start", start);
         param.put("length", length);
 
@@ -160,16 +168,47 @@ public class MemberController {
         return gson.toJson(result);
     }
 
+    @RequestMapping(value = "/memberInvestment", method = RequestMethod.GET)
+    public String memberInvestment(@RequestParam(value = "searchKey", required = false) String searchKey, ModelMap model) {
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
+        return "/memberInvestment";
+    }
+
+    @RequestMapping(value = "/memberFunds", method = RequestMethod.GET)
+    public String memberFunds(@RequestParam(value = "searchKey", required = false) String searchKey, ModelMap model) {
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
+        return "/memberFunds";
+    }
+
+    @RequestMapping(value = "/memberDeposit", method = RequestMethod.GET)
+    public String memberDeposit(@RequestParam(value = "searchKey", required = false) String searchKey, ModelMap model) {
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
+        return "/memberDeposit";
+    }
+    @RequestMapping(value = "/memberWithdraw", method = RequestMethod.GET)
+    public String memberWithdraw(@RequestParam(value = "searchKey", required = false) String searchKey, ModelMap model) {
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
+        return "/memberWithdraw";
+    }
+    @RequestMapping(value = "/memberStock", method = RequestMethod.GET)
+    public String memberStock(@RequestParam(value = "searchKey", required = false) String searchKey, ModelMap model) {
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
+        return "/memberStock";
+    }
+
     @ResponseBody
-    @RequestMapping(value = "/memberInvestment", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String memberInvestment(@RequestParam(value = "memberNo", required = false) Integer memberNo,
-                                   @RequestParam(value = "borrower", required = false) String borrower,
-                                   @RequestParam(value = "draw", required = false) Integer draw,
-                                   @RequestParam(value = "start", required = false) Integer start,
-                                   @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+    @RequestMapping(value = "/investment", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String investment(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                             @RequestParam(value = "draw", required = false) Integer draw,
+                             @RequestParam(value = "start", required = false) Integer start,
+                             @RequestParam(value = "length", required = false, defaultValue = "1000") Integer length) {
         Map<String, Object> param = new HashMap<>();
-        param.put("user_id", memberNo);
-        param.put("borrower", borrower);
+        param.put("memberNo", memberNo);
         param.put("start", start);
         param.put("length", length);
 
@@ -183,19 +222,19 @@ public class MemberController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/memberReturn", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String memberReturn(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+    @RequestMapping(value = "/stock", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String stock(@RequestParam(value = "memberNo", required = false) Integer memberNo,
                                @RequestParam(value = "draw", required = false) Integer draw,
                                @RequestParam(value = "start", required = false) Integer start,
-                               @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
+                               @RequestParam(value = "length", required = false, defaultValue = "1000") Integer length) {
         Map<String, Object> param = new HashMap<>();
-        param.put("user_id", memberNo);
+        param.put("memberNo", memberNo);
         param.put("start", start);
         param.put("length", length);
 
-        int recordCount = memberMapper.getReturnCount(param);
+        int recordCount = memberMapper.getStockCount(param);
         Map<String, Object> result = new HashMap<>();
-        result.put("data", memberMapper.selectReturn(param));
+        result.put("data", memberMapper.selectStock(param));
         result.put("draw", draw);/*draw——number类型——请求次数计数器，每次发送给服务器后原封返回，因为请求是异步的，为了确保每次请求都能对应到服务器返回到的数据。*/
         result.put("recordsTotal", recordCount);
         result.put("recordsFiltered", recordCount);
@@ -209,7 +248,7 @@ public class MemberController {
                                   @RequestParam(value = "start", required = false) Integer start,
                                   @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
         Map<String, Object> param = new HashMap<>();
-        param.put("user_id", memberNo);
+        param.put("memberNo", memberNo);
         param.put("start", start);
         param.put("length", length);
 
@@ -222,27 +261,29 @@ public class MemberController {
         return gson.toJson(result);
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/memberTarget", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-    public String memberTarget(@RequestParam(value = "memberNo", required = false) Integer memberNo,
-                               @RequestParam(value = "investor", required = false) String investor,
-                               @RequestParam(value = "cooperative", required = false) String cooperative,
-                               @RequestParam(value = "draw", required = false) Integer draw,
-                               @RequestParam(value = "start", required = false) Integer start,
-                               @RequestParam(value = "length", required = false, defaultValue = "10000") Integer length) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("user_id", memberNo);
-        param.put("investor", investor);
-        param.put("cooperative", cooperative);
-        param.put("start", start);
-        param.put("length", length);
+    @RequestMapping(value = "/memberOrder", method = RequestMethod.GET)
+    public String memberOrder(@RequestParam(value = "searchKey", required = false) String searchKey, ModelMap model) {
+        model.addAttribute("title", configs.getProperty("title"));
+        model.addAttribute("short_title", configs.getProperty("short_title"));
+        return "/memberOrder";
+    }
 
-        int recordCount = memberMapper.getTargetCount(param);
+    @ResponseBody
+    @RequestMapping(value = "/order", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
+    public String order(@RequestParam(value = "memberNo", required = false) Integer memberNo,
+                        @RequestParam(value = "draw", required = false) Integer draw) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("memberNo", memberNo);
+
+        int recordCount = memberMapper.getOrderCount(param);
         Map<String, Object> result = new HashMap<>();
-        result.put("data", memberMapper.selectTarget(param));
+        result.put("data", memberMapper.selectOrder(param));
         result.put("draw", draw);/*draw——number类型——请求次数计数器，每次发送给服务器后原封返回，因为请求是异步的，为了确保每次请求都能对应到服务器返回到的数据。*/
         result.put("recordsTotal", recordCount);
         result.put("recordsFiltered", recordCount);
+
+        result.put("title", configs.getProperty("title"));
+        result.put("short_title", configs.getProperty("short_title"));
         return gson.toJson(result);
     }
 

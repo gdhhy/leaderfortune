@@ -3,16 +3,7 @@
 
 <mapper namespace="com.zcreate.tree.dao.MemberMapper">
     <cache eviction="LRU" readOnly="true" flushInterval="86400000" size="10000"/>
-    <!--
-        biaodi	标的信息 target
-        chongzhi	充值记录 deposit
-        huankuan	还款记录 repayment
-        huikuan	回款记录 return
-        tixian	提现记录 withdraw
-        touzi	投资记录 investment
-        user	用户信息
-        useraccount	资金流水 funds
-    -->
+
     <resultMap id="MemberResult" type="com.zcreate.tree.pojo.Member">
         <result column="member_id" jdbcType="INTEGER" property="memberId"/>
         <result column="member_no" jdbcType="VARCHAR" property="memberNo"/>
@@ -21,13 +12,7 @@
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="id_card" jdbcType="VARCHAR" property="idCard"/>
         <result column="member_info" jdbcType="VARCHAR" property="memberInfo"/>
-        <result column="target_count" jdbcType="INTEGER" property="targetCount"/>
-        <result column="deposit_count" jdbcType="INTEGER" property="depositCount"/>
-        <result column="repayment_count" jdbcType="INTEGER" property="repaymentCount"/>
-        <result column="return_count" jdbcType="INTEGER" property="returnCount"/>
-        <result column="withdraw_count" jdbcType="INTEGER" property="withdrawCount"/>
-        <result column="investment_count" jdbcType="INTEGER" property="investmentCount"/>
-        <result column="funds_count" jdbcType="INTEGER" property="fundsCount"/>
+
     </resultMap>
 
     <sql id="queryUserWhere">
@@ -35,11 +20,11 @@
             <if test="@com.zcreate.Ognl@isNotEmpty(param.memberNo)">AND member_no = #{param.memberNo:VARCHAR}</if>
             <if test="@com.zcreate.Ognl@isNotEmpty(param.userName)">AND user_name = #{param.userName:VARCHAR}</if>
             <if test="@com.zcreate.Ognl@isNotEmpty(param.realName)">AND real_name = #{param.realName:VARCHAR}</if>
-            <!--<if test="@com.zcreate.Ognl@isNotEmpty(param.borrower)">AND member_no in (SELECT member_id FROM member A join (select distinct user_id from touzi where 借款用户 in
-                (select user_name from member where real_name=#{param.borrower:VARCHAR})) B on A.member_no=B.user_id)
+            <!--<if test="@com.zcreate.Ognl@isNotEmpty(param.borrower)">AND member_no in (SELECT member_id FROM member A join (select distinct memberNo from touzi where 借款用户 in
+                (select user_name from member where real_name=#{param.borrower:VARCHAR})) B on A.member_no=B.memberNo)
             </if>
-            <if test="@com.zcreate.Ognl@isNotEmpty(param.investor)">AND member_no in ( select user_id from biaodi where 投资人 like '%${param.investor}%')</if>
-            <if test="@com.zcreate.Ognl@isNotEmpty(param.cooperative)">AND member_no in ( select user_id from biaodi where 合作机构 like '%${param.cooperative}%')</if>-->
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.investor)">AND member_no in ( select memberNo from biaodi where 投资人 like '%${param.investor}%')</if>
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.cooperative)">AND member_no in ( select memberNo from biaodi where 合作机构 like '%${param.cooperative}%')</if>-->
             <if test="@com.zcreate.Ognl@isNotEmpty(param.phone)">AND phone = #{param.phone:VARCHAR}</if>
             <if test="@com.zcreate.Ognl@isNotEmpty(param.idCard)">AND id_card = #{param.idCard:VARCHAR}</if>
         </where>
@@ -49,8 +34,7 @@
         <include refid="queryUserWhere"/>
     </select>
     <select id="selectMember" resultMap="MemberResult" parameterType="java.util.Map" useCache="true">
-        SELECT member_id,member_no,user_name,real_name,id_card,phone,email,member_info,target_count,deposit_count,repayment_count,
-        return_count,withdraw_count,investment_count,funds_count FROM member
+        SELECT member_id,member_no,user_name,real_name,id_card,phone,email,member_info FROM member
         <include refid="queryUserWhere"/>
         <choose>
             <when test="param.start>0 and param.length >0">
@@ -60,71 +44,49 @@
                 limit #{param.length:INTEGER}
             </when>
         </choose>
-    </select><!-- <sql id="queryUserWhere">
-        <where>
-            <if test="param.memberNo!=null">AND 用户名 = #{param.memberNo:INTEGER}</if>
-            <if test="param.realName!=null">AND 真实姓名 = #{param.realName:VARCHAR}</if>
-            <if test="param.phone!=null">AND 电话号码 = #{param.phone:VARCHAR}</if>
-            <if test="param.idCard!=null">AND 身份证号码 = #{param.idCard:VARCHAR}</if>
-        </where>
-    </sql>
-    <select id="getMemberCount" resultType="int" parameterType="java.util.Map" useCache="true">
-        SELECT count(*) FROM user
-        <include refid="queryUserWhere"/>
     </select>
-    <select id="selectMember" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT id,用户名,真实姓名,电话号码,身份证号码,邮箱账号,绑定的银行卡号,支行名称,开户行地址,银行名称,第三方账号,借款总金额,借款次数,应还本息,已还利息,总投资金额,已收本金,已收利息,合作机构,用户类型,
-        注册时间,地址,旧uid,"(旧)汇付天下账户","(旧)汇付天下id","(旧)银行","(旧)银行卡号","(旧)支行","(旧)借款总金额","(旧)借款次数","(旧)担保公司","(旧)已还总利息","(旧)已还总本金","(旧)已收总利息",
-        "(旧)已收总本金","(旧)注册时间",类型,总充值,总提现 FROM user
-        <include refid="queryUserWhere"/>
-        <choose>
-            <when test="param.start>0 and param.length >0">
-                limit #{param.start:INTEGER},#{param.length:INTEGER}
-            </when>
-            <when test="param.length >0">
-                limit #{param.length:INTEGER}
-            </when>
-        </choose>收
-    </select>-->
     <!-- 标的信息 -->
-    <select id="getTargetCount" resultType="int" parameterType="java.util.Map" useCache="true">
+    <select id="getOrderCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*)
-        FROM biaodi
-        where user_id = #{param.user_id:INTEGER}
+        FROM gcy_v3.order_list
+        where buyer_id = #{param.buyer_id:INTEGER}
     </select>
-    <select id="selectTarget" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        select A.*,ifnull(B.real_name,'')债权人姓名 from (SELECT 订单号,user_id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,微商银行账号,绑定的银行卡号,ifnull(银行名称,'')银行名称,
-        ifnull(支行名称,'')支行名称,ifnull(`(旧)银行卡号`,'') `(旧)银行卡号`, ifnull(归属银行,'')归属银行, ifnull(开户支行,'')开户支行,ifnull(`(旧)汇付天下用户`,'') '(旧)汇付天下用户',
-        ifnull(`(旧)汇付天下账号`,'')'(旧)汇付天下账号',项目名称,借款金额,借款利息,借款期数,总成本, ifnull(委托人姓名,'')委托人姓名,ifnull(还款方式,'')还款方式,借款用途, ifnull(合作机构,'')合作机构,
-        ifnull(投资人,'')投资人, 签单号, ifnull(上线时间,'')上线时间, ifnull(签单时间,'')签单时间, ifnull(满标时间,'')满标时间, ifnull(放款时间,'')放款时间,
-        ifnull(到期时间,'')到期时间,ifnull(借款类型,'')借款类型, ifnull(债权人,'')债权人,状态
-        FROM biaodi A
+    <select id="selectOrder" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        select a.order_no 订单号,a.buyer_id 买家编号,f.real_name 真实姓名,FROM_UNIXTIME(a.create_time)下单时间,a.state 订单状态,b.id 子订单编号,b.vendor_id 商家编号,g.company_name 公司名称 ,b.shop_id 店铺编号,
+        e.name 商店名称,b.item_amount 商品总价,b.final_amount 订单最终金额,b.state 子订单状态 ,c.item_id 商品编号,c.title 商品名称,c.price 商品单价,c.quantity 销售数量,c.final_amount 商品实际金额,
+        d.consignee_person 收货人姓名,d.consignee_phone 收货人电话,d.shipping_address 收货人地址
+        from gcy_v3.order_list a
+        inner join gcy_v3.sale_sub_order b on a.id=b.order_id
+        left join (select a.order_id,GROUP_CONCAT(item_id) item_id,GROUP_CONCAT(title) title,GROUP_CONCAT(quantity) quantity,GROUP_CONCAT(price) price,GROUP_CONCAT(final_amount)
+        final_amount
+        from gcy_v3.sale_order_item a,gcy_v3.item_info b where a.item_id=b.id group by a.order_id ) c on b.id=c.order_id
+        left join gcy_v3.sale_order d on a.id=d.order_id
+        left join gcy_v3.mm_trusted_info f on a.buyer_id =f.member_id
+        left join gcy_v3.mch_enterprise_info g on b.vendor_id =g.mch_id
+        left join gcy_v3.mch_shop e on b.shop_id=e.id
         <where>
-            <if test="@com.zcreate.Ognl@isNotEmpty(param.user_id)">AND user_id = #{param.user_id:INTEGER}</if>
-            <if test="@com.zcreate.Ognl@isNotEmpty(param.investor)">AND 投资人 like '%${param.investor}%'</if>
-            <if test="@com.zcreate.Ognl@isNotEmpty(param.cooperative)">AND 合作机构 like '%${param.cooperative}%'</if>
+            b.is_paid =1
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.memberNo)">and a.buyer_id= #{param.memberNo:INTEGER}</if>
         </where>
-        ) A
-        left join member B on A.债权人=B.member_no
-        order by 订单号
-        <choose>
-            <when test="param.start>0 and param.length >0">
-                limit #{param.start:INTEGER},#{param.length:INTEGER}
-            </when>
-            <when test="param.length >0">
-                limit #{param.length:INTEGER}
-            </when>
-        </choose>
+        limit 100;
     </select>
     <!--充值记录-->
     <select id="getDepositCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*)
-        FROM chongzhi
-        where user_id = #{param.user_id:INTEGER}
+        from ppi_log a
+        WHERE type in(2,6) AND (title  LIKE '%wechat%' or title  LIKE '%alipay%' or
+        title  LIKE '%ICBC%' or title LIKE '现金%' or title  LIKE '%积分充值%' or title like '冲正原交易%') and integral &lt; 1000000
+        and a.member_id = #{param.memberNo:INTEGER}
     </select>
     <select id="selectDeposit" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,充值金额,充值手续费,充值类型,ifnull(充值银行卡号,'')充值银行卡号,订单号,状态,时间 FROM chongzhi
-        where user_id = #{param.user_id:INTEGER}
+        select a.member_id 会员id,c.name 用户名 ,c.phone 手机号码,d.real_name 真实姓名,d.card_id 证件号码,e.account 银行卡号,a.title 标题 ,case a.type when 2 then '人工充值' when 6 then '自动充值' end 类型 ,a.integral 积分,FROM_UNIXTIME(a.create_time) 充值时间
+        from ppi_log a
+        left join gcy_v3.mm_profile c on a.member_id=c.member_id
+        left join gcy_v3.mm_trusted_info d on a.member_id=d.member_id
+        left join gcy_v3.mm_bank e on a.member_id=e.member_id
+        WHERE type in(2,6) AND (title LIKE '%wechat%' or title LIKE '%alipay%' or
+        title LIKE '%ICBC%' or title LIKE '现金%' or title LIKE '%积分充值%' or title like '冲正原交易%') and integral &lt; 1000000
+        and a.member_id = #{param.memberNo:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}
@@ -138,12 +100,17 @@
     <!--提现记录-->
     <select id="getWithdrawCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*)
-        FROM tixian
-        where user_id = #{param.user_id:INTEGER}
+        from gcy_v3.mm_wallet_log a
+        where a.kind in(12,13) and a.state>=3 and a.member_id=#{param.memberNo:INTEGER}
     </select>
     <select id="selectWithdraw" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,用户名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,提现金额,提现手续费,取现类型,取现银行卡号,订单号,状态,时间
-        FROM tixian where user_id = #{param.user_id:INTEGER}
+        select a.member_id 会员id,c.name 用户名 ,c.phone 手机号码,d.real_name 真实姓名,d.card_id 证件号码,e.account 银行卡号,a.title 标题,
+        case a.kind when 12 then '提现到银行卡'  when 13 then '提现到第三方账户' end 业务类型,a.amount 金额 ,a.csn_fee 手续费,a.remark 备注,FROM_UNIXTIME(a.create_time) 提现时间
+        from gcy_v3.mm_wallet_log a
+        left join gcy_v3.mm_profile c on a.member_id=c.member_id
+        left join gcy_v3.mm_trusted_info d on a.member_id=d.member_id
+        left join gcy_v3.mm_bank e on  a.member_id=e.member_id
+        where a.kind in(12,13) and a.state>=3 and a.member_id=#{param.memberNo:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}
@@ -151,19 +118,18 @@
             <when test="param.length >0">
                 limit #{param.length:INTEGER}
             </when>
-
         </choose>
     </select>
     <!--还款记录-->
     <select id="getRepaymentCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*)
         FROM huankuan
-        where 用户id = #{param.user_id:INTEGER}
+        where 用户id = #{param.memberNo:INTEGER}
     </select>
     <select id="selectRepayment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
         SELECT 用户id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,资金总额,应还本金,应还利息,剩余还款金额,`收款期数/总期数`,
         要求还款时间,借款人实际还款时,交易状况,状态 FROM huankuan
-        where 用户id = #{param.user_id:INTEGER}
+        where 用户id = #{param.memberNo:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}
@@ -174,15 +140,20 @@
         </choose>
     </select>
     <!--回款记录-->
-    <select id="getReturnCount" resultType="int" parameterType="java.util.Map" useCache="true">
+    <select id="getStockCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*)
-        FROM huikuan
-        where user_id = #{param.user_id:INTEGER}
+        from gq1_quota_log a  inner join gq1_account b on a.account_id=b.id
+        where  b.member_id= #{param.memberNo:INTEGER}
     </select>
-    <select id="selectReturn" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,借款项目名称,借款订单号,资金总额,应收本金,应收利息,`收款期数/总期数`,
-        要求还款时间,借款用户还款时间,ifnull(提前还款时间,'')提前还款时间,交易状况,类型,还款状态 FROM huikuan
-        where user_id = #{param.user_id:INTEGER}
+    <select id="selectStock" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
+        select b.member_id 会员id,c.name 用户名 ,c.phone 手机号码,d.real_name 真实姓名,d.card_id 证件号码,e.account 银行卡号,b.project_id 项目编号, f.`name` 项目名称,a.quota 原始股数量, a.unit_amount 原始股单价,case when  a.kind in(1,4,5,6)  then '客服股权充入、积分转股权、赠送股权等' when a.kind in(2,3) then '购买股权' when a.kind =7 then '份额赠送' end '类型',a.title 标题,FROM_UNIXTIME(a.create_time) 创建时间
+        from gq1_quota_log a
+        inner join gq1_account b on a.account_id=b.id
+        left join gq1_project f on b.project_id=f.id
+        left join gcy_v3.mm_profile c on b.member_id=c.member_id
+        left join gcy_v3.mm_trusted_info d on b.member_id=d.member_id
+        left join gcy_v3.mm_bank e on  b.member_id=e.member_id
+        where b.member_id= #{param.memberNo:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}
@@ -195,19 +166,23 @@
     <!--投资记录-->
     <select id="getInvestmentCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*)
-        FROM touzi
-        where user_id = #{param.user_id:INTEGER}
+        FROM ppi_order
+        where member_id = #{param.memberNo:INTEGER}
     </select>
     <select id="selectInvestment" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT user_id,用户名,真实姓名,电话号码,身份证号码,ifnull(绑定的银行卡号,'')绑定的银行卡号,微商银行账号,投资金额,总加息利率,借款项目名称,借款订单号,借款用户,是否自动投标,债权申请转让,
-        ifnull(放款状态,'')放款状态,投资状态,ifnull(交易号,'')交易号,时间 FROM touzi
+        select a.member_id 会员id,c.name 用户名 ,c.phone 手机号码,d.real_name 真实姓名,d.card_id 证件号码,e.account 银行卡号,a.item_id 项目id,b.title 项目名称,a.buy_quota 购买份额,
+        a.price 购买单价,a.buy_quota*a.price 购买积分,b.rate 赠送比例,a.buy_quota*a.price*b.rate 赠送积分,a.buy_quota*a.price + a.buy_quota*a.price*b.rate 结算积分,
+        FROM_UNIXTIME(a.begin_time) 购买时间,FROM_UNIXTIME(a.end_time) 结算时间
+        from ppi_order a
+        left join ppi_item b on a.item_id=b.id
+        left join gcy_v3.mm_profile c on a.member_id=c.member_id
+        left join gcy_v3.mm_trusted_info d on a.member_id=d.member_id
+        left join gcy_v3.mm_bank e on a.member_id=e.member_id
         <where>
-            <if test="@com.zcreate.Ognl@isNotEmpty(param.user_id)">AND user_id = #{param.user_id:INTEGER}</if>
-            <if test="@com.zcreate.Ognl@isNotEmpty(param.borrower)">AND
-                (借款用户 in (select user_name from member where real_name=#{param.borrower:VARCHAR}) OR
-                借款用户 LIKE '%${param.borrower}%')
-            </if>
+            is_refund=0
+            <if test="@com.zcreate.Ognl@isNotEmpty(param.memberNo)">and A.member_id= #{param.memberNo:INTEGER}</if>
         </where>
+        order by a.end_time
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}
@@ -220,14 +195,16 @@
     <!--资金流水-->
     <select id="getFundsCount" resultType="int" parameterType="java.util.Map" useCache="true">
         SELECT count(*)
-        FROM useraccount
-        where 用户id = #{param.user_id:INTEGER}
+        FROM ppi_log
+        where member_id = #{param.memberNo:INTEGER}
     </select>
     <select id="selectFunds" resultType="java.util.Map" parameterType="java.util.Map" useCache="true">
-        SELECT 用户id,用户名,真实姓名,电话号码,邮箱账号,身份证号码,ifnull(绑定的银行卡号,'') 绑定的银行卡号,微商银行账号,资金变动金额,资金总额,
-        不可提现金额,现金,冻结,资金变动说明,ifnull(借款项目名称,'') 借款项目名称,
-        ifnull( 借款订单号,'') 借款订单号,时间,ifnull(资金变动类型,'') 资金变动类型,变动类型 FROM useraccount
-        where 用户id = #{param.user_id:INTEGER}
+        select a.member_id 会员id,c.name 用户名 ,c.phone 手机号码,d.real_name 真实姓名,d.card_id 证件号码,e.account 银行卡号,a.title 标题 ,case a.type when 4 then '积分转创业金' end 类型 ,a.integral*-1 创业金,FROM_UNIXTIME(a.create_time) 创建时间
+        from ppi_log a
+        left join gcy_v3.mm_profile c on a.member_id=c.member_id
+        left join gcy_v3.mm_trusted_info d on a.member_id=d.member_id
+        left join gcy_v3.mm_bank e on a.member_id=e.member_id
+        where a.type =4 and a.member_id= #{param.memberNo:INTEGER}
         <choose>
             <when test="param.start>0 and param.length >0">
                 limit #{param.start:INTEGER},#{param.length:INTEGER}

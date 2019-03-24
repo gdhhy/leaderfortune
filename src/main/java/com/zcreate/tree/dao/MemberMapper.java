@@ -16,9 +16,9 @@ public interface MemberMapper {
 
     List<Member> selectMember(@Param("param") Map<String, Object> param);
 
-    int getTargetCount(@Param("param") Map<String, Object> param);
+    int getOrderCount(@Param("param") Map<String, Object> param);
 
-    List<Map<String, Object>> selectTarget(@Param("param") Map<String, Object> param);
+    List<Map<String, Object>> selectOrder(@Param("param") Map<String, Object> param);
 
     int getDepositCount(@Param("param") Map<String, Object> param);
 
@@ -28,9 +28,9 @@ public interface MemberMapper {
 
     List<Map<String, Object>> selectRepayment(@Param("param") Map<String, Object> param);
 
-    int getReturnCount(@Param("param") Map<String, Object> param);
+    int getStockCount(@Param("param") Map<String, Object> param);
 
-    List<Map<String, Object>> selectReturn(@Param("param") Map<String, Object> param);
+    List<Map<String, Object>> selectStock(@Param("param") Map<String, Object> param);
 
     int getWithdrawCount(@Param("param") Map<String, Object> param);
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
-    <title>礼德财富查询系统</title>
+    <title>${title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 
     <!-- bootstrap & fontawesome -->
@@ -58,15 +58,13 @@
                         {"data": "realName", "sClass": "center", "defaultContent": ""},
                         {"data": "idCard", "sClass": "center"},
                         {"data": "phone", "sClass": "center"},
-                        {"data": "usertype", "sClass": "center"},
-                        {"data": "deposit", "sClass": "center"},
-                        {"data": "withdraw", "sClass": "center"},
+                        {"data": "userlevel", "sClass": "center"},
+                        {"data": "orderCount", "sClass": "center"},
                         {"data": "investment", "sClass": "center", "defaultContent": ""},
-
-                        {"data": "repayment", "sClass": "center"},
-                        {"data": "returnCount", "sClass": "center", "defaultContent": ""},
                         {"data": "fundsCount", "sClass": "center", "defaultContent": ""},
-                        {"data": "targetCount", "sClass": "center"}
+                        {"data": "depositCount", "sClass": "center", "defaultContent": ""},
+                        {"data": "withdrawCount", "sClass": "center", "defaultContent": ""},
+                        {"data": "stockCount", "sClass": "center", "defaultContent": ""}
                     ],
 
                     'columnDefs': [
@@ -80,48 +78,41 @@
                         {"orderable": false, "targets": 2, title: '真实姓名'},
                         {"orderable": false, "targets": 3, title: '身份证号码'},
                         {"orderable": false, "targets": 4, title: '电话号码'},
-                        {"orderable": false, "targets": 5, title: '用户类型'},
+                        {"orderable": false, "targets": 5, title: '等级'},
                         {
-                            "orderable": false, "targets": 6, title: '总充值',
+                            "orderable": false, "targets": 6, title: '订单',
                             render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail"  data-Url="/memberDeposit.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                                return data > 0 ? '<a href="#" class="hasDetail"  data-Url="/memberOrder.jspx?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 7, title: '总提现',
+                            "orderable": false, "targets": 7, title: '积分投资',
                             render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberWithdraw.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberInvestment.jspx?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 8, title: '投资金额',
+                            "orderable": false, "targets": 8, title: '创业金',
                             render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberInvestment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberFunds.jspx?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                            }
+                        } ,
+                        {
+                            "orderable": false, "targets": 9, title: '积分充值',
+                            render: function (data, type, row, meta) {
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberDeposit.jspx?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 9, title: '还款金额',
+                            "orderable": false, "targets": 10, title: '提现',
                             render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberRepayment.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberWithdraw.jspx?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         },
                         {
-                            "orderable": false, "targets": 10, title: '回款记录',
+                            "orderable": false, "targets": 11, title: '原始股',
                             render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberReturn.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
-                            }
-                        },
-
-                        {
-                            "orderable": false, "targets": 11, title: '资金流水',
-                            render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberFunds.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
-                            }
-                        },
-                        {
-                            "orderable": false, "targets": 12, title: '标的信息',
-                            render: function (data, type, row, meta) {
-                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberTarget.jsp?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
+                                return data > 0 ? '<a href="#" class="hasDetail" data-Url="/memberStock.jspx?memberNo={0}">{1}</a>'.format(row["memberNo"], data) : '';
                             }
                         }
                     ],
@@ -144,20 +135,31 @@
                     "serverSide": true,
                     select: {style: 'single'}
                 });
-            /*myTable.on('order.dt search.dt', function () {
+            myTable.on('order.dt search.dt', function () {
                 myTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
                     cell.innerHTML = i + 1;
                 });
-            });*/
+            });
             myTable.on('xhr', function (e, settings, json, xhr) {
                 if (json.data.length > 0)
                     for (var i = 0; i < json.data.length; i++) {
                         var memberInfo = JSON.parse(json.data[i].memberInfo);
-                        json.data[i].usertype = memberInfo['基本信息']['用户类型'];
-                        json.data[i].deposit = memberInfo['资金']['总充值'];
-                        json.data[i].withdraw = memberInfo['资金']['总提现'];
-                        json.data[i].investment = memberInfo['资金']['总投资金额'];
-                        json.data[i].repayment = memberInfo['资金']['应还本息'];
+                        json.data[i].userlevel = memberInfo['基本信息']['等级'];
+                        if (memberInfo['统计'] !== undefined) {
+                            json.data[i].orderCount = memberInfo['统计']['订单记录数'];
+                            json.data[i].investment = memberInfo['统计']['投资记录数'];
+                            json.data[i].fundsCount = memberInfo['统计']['创业金明细记录数'];
+                            json.data[i].depositCount = memberInfo['统计']['积分充值记录数'];
+                            json.data[i].withdrawCount = memberInfo['统计']['提现记录数'];
+                            json.data[i].stockCount = memberInfo['统计']['原始股记录数'];
+                        }else {
+                            json.data[i].orderCount = 0;
+                            json.data[i].investment = 0;
+                            json.data[i].fundsCount = 0;
+                            json.data[i].depositCount = 0;
+                            json.data[i].withdrawCount = 0;
+                            json.data[i].stockCount = 0;
+                        }
                     }
             });
             myTable.on('draw', function () {
